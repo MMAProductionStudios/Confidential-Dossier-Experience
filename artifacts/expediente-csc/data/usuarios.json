@@ -1,5 +1,25 @@
 [
   {
+    "id": 0,
+    "numeroExpediente": "DEMO",
+    "codigo": "DEMO",
+    "nombre": "Usuario de Prueba",
+    "tituloProfesional": "Acceso de Demostración",
+    "categoria": "Consejo Asesor Multidisciplinario",
+    "especialidad": "Evaluación General",
+    "pais": "México",
+    "estado": "Zacatecas",
+    "ciudad": "Guadalupe",
+    "email": "demo@expediente.mx",
+    "telefono": "+52-000-000-0000",
+    "nivelAutorizacion": "CAM-03",
+    "mensajePersonalizado": "Este es un usuario de demostración creado para verificar el funcionamiento del sistema. Su acceso es temporal y está registrado con fines de prueba.",
+    "fotografia": "",
+    "activo": true,
+    "ultimoAcceso": null,
+    "evaluacionRealizada": false
+  },
+  {
     "id": 1,
     "numeroExpediente": "CSC-2026-MB-001",
     "codigo": "JLG26001",
