@@ -186,22 +186,12 @@ function validarCampos(expediente, codigo) {
     marcarErrorCampo('campo-expediente', 'expediente-error',
       'CAMPO REQUERIDO. INGRESE EL NÚMERO DE EXPEDIENTE ASIGNADO.');
     esValido = false;
-
-  } else if (expediente.length < 5) {
-    marcarErrorCampo('campo-expediente', 'expediente-error',
-      'NÚMERO DE EXPEDIENTE INSUFICIENTE. VERIFIQUE EL FORMATO.');
-    esValido = false;
   }
 
   // Validar código de autorización
   if (!codigo) {
     marcarErrorCampo('campo-codigo', 'codigo-error',
       'CAMPO REQUERIDO. INGRESE EL CÓDIGO DE AUTORIZACIÓN ASIGNADO.');
-    esValido = false;
-
-  } else if (codigo.length < 4) {
-    marcarErrorCampo('campo-codigo', 'codigo-error',
-      'CÓDIGO DE AUTORIZACIÓN INSUFICIENTE. MÍNIMO 4 CARACTERES.');
     esValido = false;
   }
 
