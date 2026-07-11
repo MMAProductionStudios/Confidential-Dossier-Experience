@@ -20,6 +20,8 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
+import { safeStorage } from './ui.js';
+
 // ── Configuración de rutas de los archivos de datos ─────────────────────────
 // Al migrar a Supabase/Firebase, estas constantes dejarían de usarse.
 const RUTA_USUARIOS  = './data/usuarios.json';
@@ -142,8 +144,8 @@ export async function registrarEvaluacion(evaluacion) {
     expediente: 'CSC-2026-MB'
   };
 
-  // Persistir en sesión del navegador
-  sessionStorage.setItem('evaluacion_registrada', JSON.stringify(registro));
+  // Persistir en almacenamiento seguro
+  safeStorage.setItem('evaluacion_registrada', JSON.stringify(registro));
 
   // Simular latencia de red para efecto institucional realista
   await new Promise(resolve => setTimeout(resolve, 1200));
@@ -173,5 +175,5 @@ export async function registrarAcceso(usuarioId) {
     usuarioId,
     fecha: new Date().toISOString()
   };
-  sessionStorage.setItem('ultimo_acceso', JSON.stringify(acceso));
+  safeStorage.setItem('ultimo_acceso', JSON.stringify(acceso));
 }

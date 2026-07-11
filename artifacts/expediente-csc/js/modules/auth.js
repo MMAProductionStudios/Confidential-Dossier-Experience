@@ -15,7 +15,8 @@ import {
   mostrarError,
   limpiarMensaje,
   setVisible,
-  setBotonCargando
+  setBotonCargando,
+  safeStorage
 } from './ui.js';
 
 
@@ -133,8 +134,8 @@ async function manejarAutenticacion(e) {
       // Registrar acceso
       await registrarAcceso(usuario.id);
 
-      // Guardar en sessionStorage para persistencia durante la sesión
-      sessionStorage.setItem('usuario_sesion', JSON.stringify(usuario));
+      // Guardar en almacenamiento seguro para persistencia durante la sesión
+      safeStorage.setItem('usuario_sesion', JSON.stringify(usuario));
 
       // Transicionar a pantalla de credencial
       // El evento personalizado notifica al módulo de credencial
@@ -259,10 +260,10 @@ function limpiarFormulario() {
 export function getUsuarioSesion() {
   if (usuarioSesion) return usuarioSesion;
 
-  // Intentar recuperar de sessionStorage
-  const guardado = sessionStorage.getItem('usuario_sesion');
+  // Intentar recuperar del almacenamiento seguro
+  const guardado = safeStorage.getItem('usuario_sesion');
   if (guardado) {
-    usuarioSesion = JSON.parse(guardado);
+    try { usuarioSesion = JSON.parse(guardado); } catch (_) {}
     return usuarioSesion;
   }
 
@@ -278,9 +279,9 @@ export function cerrarSesion() {
   usuarioSesion    = null;
   intentosFallidos = 0;
 
-  sessionStorage.removeItem('usuario_sesion');
-  sessionStorage.removeItem('ultimo_acceso');
-  sessionStorage.removeItem('evaluacion_registrada');
+  safeStorage.removeItem('usuario_sesion');
+  safeStorage.removeItem('ultimo_acceso');
+  safeStorage.removeItem('evaluacion_registrada');
 
   limpiarFormulario();
 }

@@ -9,6 +9,27 @@
  */
 
 
+// ── Almacenamiento seguro ────────────────────────────────────────────────────
+// sessionStorage puede estar bloqueado dentro de iframes (política de terceros).
+// Este wrapper intenta usarlo y cae silenciosamente a memoria si falla.
+const _mem = {};
+const _storageOk = (() => {
+  try {
+    sessionStorage.setItem('__probe', '1');
+    sessionStorage.removeItem('__probe');
+    return true;
+  } catch (_) {
+    return false;
+  }
+})();
+
+export const safeStorage = {
+  setItem:    (k, v) => { try { if (_storageOk) sessionStorage.setItem(k, v); } catch(_) {} _mem[k] = v; },
+  getItem:    (k)    => { try { if (_storageOk) return sessionStorage.getItem(k); } catch(_) {} return _mem[k] ?? null; },
+  removeItem: (k)    => { try { if (_storageOk) sessionStorage.removeItem(k); } catch(_) {} delete _mem[k]; },
+};
+
+
 // ── IDs de las pantallas del sistema ────────────────────────────────────────
 const PANTALLAS = {
   BOOT:        'screen-boot',
