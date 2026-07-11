@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Expediente CSC-2026-MB"
+version = "1.0.0"
+id = "artifacts/expediente-csc"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26121
+
+[services.development]
+run = "pnpm --filter @workspace/expediente-csc run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/expediente-csc", "run", "build" ]
+publicDir = "artifacts/expediente-csc/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26121"
+BASE_PATH = "/"

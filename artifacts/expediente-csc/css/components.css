@@ -1,0 +1,604 @@
+/**
+ * components.css
+ * ─────────────────────────────────────────────────────────────────────────────
+ * COMPONENTES REUTILIZABLES — EXPEDIENTE CSC-2026-MB
+ *
+ * Botones institucionales, formularios, reproductores de audio y evidencias.
+ * Cada componente está documentado con su variante y modificadores.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* BOTONES INSTITUCIONALES                                                     */
+/* Modificadores: --primario | --secundario | --ghost | --grande | --pequeño  */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.btn-inst {
+  display:          inline-flex;
+  align-items:      center;
+  justify-content:  center;
+  gap:              var(--espacio-2);
+  padding:          var(--espacio-3) var(--espacio-6);
+  font-family:      var(--fuente-mono);
+  font-size:        var(--texto-sm);
+  font-weight:      600;
+  letter-spacing:   0.15em;
+  text-transform:   uppercase;
+  border:           1px solid transparent;
+  background:       transparent;
+  color:            var(--color-texto-primario);
+  cursor:           pointer;
+  transition:       background-color var(--transicion-rapida),
+                    border-color var(--transicion-rapida),
+                    color var(--transicion-rapida);
+  white-space:      nowrap;
+  position:         relative;
+  /* Sin border-radius — estética angular e institucional */
+  border-radius:    0;
+}
+
+/* Variante primaria — acción principal del sistema */
+.btn-inst--primario {
+  background-color: var(--color-fondo-panel);
+  border-color:     var(--color-borde-activo);
+  color:            var(--color-texto-primario);
+}
+
+.btn-inst--primario:hover {
+  background-color: var(--color-fondo-hover);
+  border-color:     var(--color-borde-marcado);
+  color:            #ffffff;
+}
+
+.btn-inst--primario:active {
+  background-color: var(--color-borde-secundario);
+}
+
+/* Variante secundaria — acción alternativa */
+.btn-inst--secundario {
+  border-color: var(--color-borde-secundario);
+  color:        var(--color-texto-secundario);
+}
+
+.btn-inst--secundario:hover {
+  border-color:     var(--color-borde-primario);
+  color:            var(--color-texto-primario);
+  background-color: var(--color-fondo-panel);
+}
+
+/* Variante ghost — botón discreto sin borde visible */
+.btn-inst--ghost {
+  border-color: transparent;
+  color:        var(--color-texto-apagado);
+  font-size:    var(--texto-xs);
+}
+
+.btn-inst--ghost:hover {
+  color:            var(--color-alerta-texto);
+  border-color:     var(--color-alerta);
+  background-color: var(--color-alerta-bg);
+}
+
+/* Tamaño grande — para acciones principales de pantalla */
+.btn-inst--grande {
+  padding:        var(--espacio-4) var(--espacio-10);
+  font-size:      var(--texto-base);
+  letter-spacing: 0.2em;
+}
+
+/* Tamaño pequeño — para acciones secundarias en encabezados */
+.btn-inst--pequeño {
+  padding:        var(--espacio-2) var(--espacio-3);
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.12em;
+}
+
+/* Ícono decorativo dentro del botón */
+.btn-inst__icono {
+  font-size:   0.6em;
+  line-height: 1;
+  opacity:     0.7;
+}
+
+/* Estado desactivado */
+.btn-inst:disabled,
+.btn-inst[disabled] {
+  opacity:        0.4;
+  cursor:         not-allowed;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* FORMULARIOS INSTITUCIONALES                                                 */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Contenedor de un campo del formulario */
+.form-campo {
+  margin-bottom: var(--espacio-5);
+}
+
+/* Etiqueta del campo */
+.form-campo__etiqueta {
+  display:        block;
+  font-size:      var(--texto-xs);
+  font-weight:    600;
+  letter-spacing: 0.12em;
+  color:          var(--color-texto-secundario);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-2);
+}
+
+/* Indicador de campo requerido */
+.form-campo__requerido {
+  color:      var(--color-alerta-texto);
+  margin-left: var(--espacio-1);
+}
+
+/* Wrapper del input con prefijo */
+.form-campo__input-wrapper {
+  display:         flex;
+  align-items:     stretch;
+  border:          1px solid var(--color-borde-primario);
+  background-color: var(--color-fondo-input);
+  transition:      border-color var(--transicion-rapida);
+}
+
+.form-campo__input-wrapper:focus-within {
+  border-color: var(--color-borde-marcado);
+}
+
+/* Prefijo del campo (ej: "ID", "COD") */
+.form-campo__prefijo {
+  padding:          var(--espacio-3) var(--espacio-3);
+  background-color: var(--color-fondo-panel);
+  border-right:     1px solid var(--color-borde-primario);
+  color:            var(--color-texto-apagado);
+  font-size:        var(--texto-xs);
+  font-weight:      600;
+  letter-spacing:   0.1em;
+  display:          flex;
+  align-items:      center;
+  white-space:      nowrap;
+}
+
+/* Input de texto */
+.form-campo__input {
+  flex:             1;
+  padding:          var(--espacio-3) var(--espacio-4);
+  background:       transparent;
+  border:           none;
+  outline:          none;
+  font-family:      var(--fuente-mono);
+  font-size:        var(--texto-base);
+  color:            var(--color-texto-primario);
+  letter-spacing:   0.08em;
+  text-transform:   uppercase;
+  width:            100%;
+}
+
+.form-campo__input::placeholder {
+  color:   var(--color-texto-apagado);
+  opacity: 0.6;
+}
+
+/* Textarea */
+.form-campo__textarea {
+  width:            100%;
+  padding:          var(--espacio-3) var(--espacio-4);
+  background-color: var(--color-fondo-input);
+  border:           1px solid var(--color-borde-primario);
+  outline:          none;
+  font-family:      var(--fuente-doc);
+  font-size:        var(--texto-base);
+  color:            var(--color-texto-primario);
+  line-height:      1.7;
+  resize:           vertical;
+  transition:       border-color var(--transicion-rapida);
+  /* Sin border-radius institucional */
+  border-radius:    0;
+}
+
+.form-campo__textarea:focus {
+  border-color: var(--color-borde-marcado);
+}
+
+.form-campo__textarea::placeholder {
+  color:   var(--color-texto-apagado);
+  opacity: 0.5;
+  font-style: italic;
+}
+
+/* Texto de ayuda del campo */
+.form-campo__hint {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.06em;
+  color:          var(--color-texto-apagado);
+  margin-top:     var(--espacio-1);
+}
+
+/* Mensaje de error del campo */
+.form-campo__error {
+  font-size:        var(--texto-xs);
+  letter-spacing:   0.05em;
+  color:            var(--color-alerta-texto);
+  margin-top:       var(--espacio-1);
+  min-height:       1em;
+  display:          none;
+}
+
+/* Mostrar error cuando tiene contenido */
+.form-campo__error:not(:empty) {
+  display: block;
+}
+
+/* Campo con error */
+.form-campo--error .form-campo__input-wrapper {
+  border-color: var(--color-alerta);
+}
+
+.form-campo--error .form-campo__textarea {
+  border-color: var(--color-alerta);
+}
+
+/* Grupo de acciones del formulario */
+.form-acciones {
+  display:         flex;
+  gap:             var(--espacio-4);
+  align-items:     center;
+  margin-top:      var(--espacio-6);
+  flex-wrap:       wrap;
+}
+
+.form-acciones--evaluacion {
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* SELECTOR DE CALIFICACIÓN                                                    */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.calificacion-selector {
+  margin-top: var(--espacio-2);
+}
+
+.calificacion-numeros {
+  display:   flex;
+  gap:       var(--espacio-2);
+  flex-wrap: wrap;
+}
+
+/* Cada número del 1 al 10 */
+.calificacion-num {
+  width:            40px;
+  height:           40px;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  border:           1px solid var(--color-borde-primario);
+  background-color: var(--color-fondo-panel);
+  font-family:      var(--fuente-mono);
+  font-size:        var(--texto-base);
+  font-weight:      600;
+  color:            var(--color-texto-secundario);
+  cursor:           pointer;
+  transition:       all var(--transicion-rapida);
+  letter-spacing:   0;
+  /* No border-radius — estilo institucional cuadrado */
+}
+
+.calificacion-num:hover {
+  border-color:     var(--color-borde-marcado);
+  color:            var(--color-texto-primario);
+  background-color: var(--color-fondo-hover);
+}
+
+/* Número seleccionado */
+.calificacion-num.seleccionado {
+  background-color: var(--color-operativo);
+  border-color:     var(--color-operativo-texto);
+  color:            var(--color-texto-primario);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* EVIDENCIA — TARJETA DE CANCIÓN                                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Contenedor individual de cada evidencia */
+.evidencia {
+  border:           1px solid var(--color-borde-primario);
+  background-color: var(--color-fondo-panel);
+  margin-bottom:    var(--espacio-6);
+  overflow:         hidden;
+  transition:       border-color var(--transicion-normal);
+}
+
+.evidencia:hover {
+  border-color: var(--color-borde-activo);
+}
+
+/* Encabezado de la evidencia (siempre visible) */
+.evidencia__header {
+  display:          flex;
+  align-items:      center;
+  gap:              var(--espacio-4);
+  padding:          var(--espacio-4) var(--espacio-5);
+  cursor:           pointer;
+  background-color: var(--color-fondo-panel);
+  border-bottom:    1px solid transparent;
+  transition:       background-color var(--transicion-rapida),
+                    border-color var(--transicion-rapida);
+  user-select:      none;
+}
+
+.evidencia__header:hover {
+  background-color: var(--color-fondo-hover);
+}
+
+.evidencia.abierta .evidencia__header {
+  border-bottom-color: var(--color-borde-primario);
+}
+
+/* Número de evidencia */
+.evidencia__numero {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.2em;
+  color:          var(--color-texto-apagado);
+  white-space:    nowrap;
+  flex-shrink:    0;
+}
+
+/* Nombre de la evidencia */
+.evidencia__nombre {
+  flex:           1;
+  font-size:      var(--texto-sm);
+  font-weight:    600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color:          var(--color-texto-primario);
+}
+
+/* Estado de la evidencia */
+.evidencia__estado {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.12em;
+  color:          var(--color-operativo-texto);
+  white-space:    nowrap;
+  flex-shrink:    0;
+}
+
+/* Botón de apertura/cierre */
+.evidencia__toggle {
+  background:   none;
+  border:       1px solid var(--color-borde-primario);
+  color:        var(--color-texto-secundario);
+  font-family:  var(--fuente-mono);
+  font-size:    var(--texto-xs);
+  letter-spacing: 0.1em;
+  padding:      var(--espacio-1) var(--espacio-3);
+  cursor:       pointer;
+  transition:   all var(--transicion-rapida);
+  white-space:  nowrap;
+  flex-shrink:  0;
+}
+
+.evidencia__toggle:hover {
+  background-color: var(--color-fondo-hover);
+  border-color:     var(--color-borde-activo);
+  color:            var(--color-texto-primario);
+}
+
+.evidencia.abierta .evidencia__toggle {
+  color:        var(--color-operativo-texto);
+  border-color: var(--color-operativo);
+}
+
+/* Contenido expandible */
+.evidencia__contenido {
+  display: none;
+  padding: var(--espacio-5);
+}
+
+.evidencia.abierta .evidencia__contenido {
+  display: block;
+}
+
+/* ── Reproductor de audio ── */
+.reproductor {
+  margin-bottom: var(--espacio-5);
+}
+
+.reproductor__label {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-2);
+}
+
+/* Reproductor nativo HTML5 estilizado */
+.reproductor__audio {
+  width:            100%;
+  height:           36px;
+  background-color: var(--color-fondo-input);
+  border:           1px solid var(--color-borde-primario);
+  /* Filtros para darle apariencia oscura en navegadores que lo soportan */
+  filter:           invert(1) hue-rotate(180deg) brightness(0.8);
+}
+
+/* Chrome/Edge: estilos del reproductor */
+.reproductor__audio::-webkit-media-controls-panel {
+  background-color: var(--color-fondo-panel);
+}
+
+/* Mensaje cuando no hay URL disponible */
+.reproductor__no-audio {
+  display:          flex;
+  align-items:      center;
+  gap:              var(--espacio-3);
+  padding:          var(--espacio-3) var(--espacio-4);
+  border:           1px dashed var(--color-borde-secundario);
+  color:            var(--color-texto-apagado);
+  font-size:        var(--texto-xs);
+  letter-spacing:   0.08em;
+}
+
+/* ── Secciones del contenido de evidencia ── */
+.evidencia-seccion {
+  margin-top:    var(--espacio-5);
+  border-top:    1px solid var(--color-borde-secundario);
+  padding-top:   var(--espacio-4);
+}
+
+.evidencia-seccion__titulo {
+  font-size:      var(--texto-xxs);
+  font-weight:    700;
+  letter-spacing: 0.2em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-3);
+  display:        flex;
+  align-items:    center;
+  gap:            var(--espacio-3);
+}
+
+.evidencia-seccion__titulo::before {
+  content:          '';
+  display:          block;
+  width:            20px;
+  height:           1px;
+  background-color: var(--color-borde-activo);
+  flex-shrink:      0;
+}
+
+.evidencia-seccion__texto {
+  font-family:    var(--fuente-doc);
+  font-size:      var(--texto-base);
+  color:          var(--color-texto-primario);
+  line-height:    1.8;
+  white-space:    pre-wrap;  /* Conservar saltos de línea de la letra */
+}
+
+.evidencia-seccion__creditos {
+  font-size:      var(--texto-sm);
+  color:          var(--color-texto-secundario);
+  line-height:    1.7;
+  white-space:    pre-wrap;
+}
+
+/* ── Tabs internos de la evidencia (Reproductor / Historia / Letra / Créditos) ── */
+.evidencia-tabs {
+  display:       flex;
+  gap:           0;
+  border-bottom: 1px solid var(--color-borde-primario);
+  margin-bottom: var(--espacio-4);
+  flex-wrap:     wrap;
+}
+
+.evidencia-tab {
+  background:     none;
+  border:         none;
+  border-bottom:  2px solid transparent;
+  color:          var(--color-texto-apagado);
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-xs);
+  font-weight:    600;
+  letter-spacing: 0.12em;
+  padding:        var(--espacio-3) var(--espacio-4);
+  cursor:         pointer;
+  text-transform: uppercase;
+  transition:     all var(--transicion-rapida);
+  margin-bottom:  -1px;
+}
+
+.evidencia-tab:hover {
+  color: var(--color-texto-primario);
+}
+
+.evidencia-tab.activo {
+  color:        var(--color-texto-primario);
+  border-bottom-color: var(--color-borde-activo);
+}
+
+.evidencia-panel {
+  display: none;
+}
+
+.evidencia-panel.activo {
+  display: block;
+}
+
+/* ── Indicador de evidencias cargando ── */
+.evidencias-cargando {
+  display:        flex;
+  align-items:    center;
+  gap:            var(--espacio-2);
+  font-size:      var(--texto-sm);
+  letter-spacing: 0.08em;
+  color:          var(--color-texto-secundario);
+  padding:        var(--espacio-8) var(--espacio-4);
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* COMPONENTE: FILA DE DATOS (credencial)                                     */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.dato-row {
+  display:        flex;
+  align-items:    baseline;
+  gap:            var(--espacio-3);
+  padding:        var(--espacio-2) 0;
+  border-bottom:  1px solid var(--color-borde-secundario);
+}
+
+.dato-row:last-child {
+  border-bottom: none;
+}
+
+.dato-row--nombre {
+  padding: var(--espacio-3) 0;
+}
+
+.dato-label {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.1em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+  flex-shrink:    0;
+  width:          180px;
+}
+
+.dato-valor {
+  font-size:      var(--texto-sm);
+  color:          var(--color-texto-primario);
+  letter-spacing: 0.05em;
+  flex:           1;
+}
+
+/* Nombre resaltado */
+.dato-valor--destacado {
+  font-size:   var(--texto-lg);
+  font-weight: 600;
+  font-family: var(--fuente-sello);
+  letter-spacing: 0.05em;
+}
+
+/* Datos parcialmente redactados */
+.dato-valor--redactado {
+  font-family:    var(--fuente-mono);
+  letter-spacing: 0.08em;
+}
+
+/* Nivel de autorización */
+.dato-valor--nivel {
+  color:       var(--color-acento);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+/* Estado activo */
+.dato-valor--activo {
+  color:       var(--color-operativo-texto);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}

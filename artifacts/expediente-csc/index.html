@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>EXPEDIENTE CSC-2026-MB — CENTRO DE DOCUMENTACIÓN</title>
+
+  <!-- ─── Tipografías institucionales ─────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ─── Estilos modulares ────────────────────────────────────────────── -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/screens.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+
+<body>
+
+  <!-- ================================================================== -->
+  <!-- CAPA DE ARRANQUE DEL SISTEMA                                        -->
+  <!-- ================================================================== -->
+  <div id="screen-boot" class="screen screen-boot active" aria-live="polite">
+    <div class="boot-container">
+      <div class="boot-logo">MM&amp;A</div>
+      <div class="boot-log" id="boot-log"></div>
+      <div class="boot-cursor" aria-hidden="true">_</div>
+    </div>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- PANTALLA INICIAL — CENTRO DE DOCUMENTACIÓN                         -->
+  <!-- ================================================================== -->
+  <div id="screen-inicio" class="screen screen-inicio">
+
+    <header class="sys-header">
+      <div class="sys-header__badge">CLASIFICADO</div>
+      <div class="sys-header__org">MM&amp;A PRODUCTION STUDIOS</div>
+      <div class="sys-header__divider"></div>
+    </header>
+
+    <main class="inicio-main">
+
+      <section class="sistema-id">
+        <p class="sistema-id__label">CENTRO DE DOCUMENTACIÓN</p>
+        <p class="sistema-id__sublabel">MM&amp;A PRODUCTION STUDIOS</p>
+      </section>
+
+      <section class="expediente-sello">
+        <div class="sello-codigo">EXPEDIENTE CSC-2026-MB</div>
+        <div class="sello-titulo-principal">EL COLAPSO DEL SENTIDO COMÚN</div>
+        <div class="sello-subtitulo">Entre Mentadas y Verdades</div>
+        <div class="sello-produccion">MM&amp;A Production Studios</div>
+      </section>
+
+      <section class="estado-panel">
+        <div class="estado-row">
+          <span class="estado-label">ESTADO DEL SISTEMA</span>
+          <span class="estado-valor estado-valor--operativo">
+            <span class="estado-dot"></span>
+            OPERATIVO
+          </span>
+        </div>
+        <div class="estado-row">
+          <span class="estado-label">NIVEL DE AUTORIZACIÓN REQUERIDO</span>
+          <span class="estado-valor">CAM-03</span>
+        </div>
+        <div class="estado-row">
+          <span class="estado-label">PROTOCOLO DE ACCESO</span>
+          <span class="estado-valor">VALIDACIÓN DE CREDENCIAL</span>
+        </div>
+        <div class="estado-row">
+          <span class="estado-label">FECHA DE CONSULTA</span>
+          <span class="estado-valor" id="fecha-sistema">—</span>
+        </div>
+      </section>
+
+      <aside class="advertencia-acceso">
+        <div class="advertencia-acceso__ico">⚠</div>
+        <p class="advertencia-acceso__texto">
+          EL ACCESO NO AUTORIZADO A ESTE SISTEMA CONSTITUYE UNA VIOLACIÓN A LOS
+          PROTOCOLOS DE CONFIDENCIALIDAD INSTITUCIONAL. TODA SESIÓN ES REGISTRADA
+          Y AUDITADA.
+        </p>
+      </aside>
+
+      <div class="accion-principal">
+        <button id="btn-validar" class="btn-inst btn-inst--primario" type="button">
+          <span class="btn-inst__icono">▶</span>
+          VALIDAR CREDENCIAL
+        </button>
+      </div>
+
+    </main>
+
+    <footer class="sys-footer">
+      <span>MM&amp;A PRODUCTION STUDIOS © 2026</span>
+      <span class="sys-footer__sep">|</span>
+      <span>USO EXCLUSIVO PERSONAL AUTORIZADO</span>
+      <span class="sys-footer__sep">|</span>
+      <span id="session-id-display">SESIÓN: —</span>
+    </footer>
+
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- PANTALLA DE AUTENTICACIÓN                                           -->
+  <!-- ================================================================== -->
+  <div id="screen-auth" class="screen screen-auth">
+
+    <header class="sys-header">
+      <div class="sys-header__badge">CLASIFICADO</div>
+      <div class="sys-header__org">MM&amp;A PRODUCTION STUDIOS</div>
+      <div class="sys-header__divider"></div>
+    </header>
+
+    <main class="auth-main">
+
+      <section class="modulo-titulo">
+        <p class="modulo-titulo__sistema">CENTRO DE DOCUMENTACIÓN</p>
+        <h1 class="modulo-titulo__nombre">MÓDULO DE AUTENTICACIÓN</h1>
+        <p class="modulo-titulo__sub">VERIFICACIÓN DE IDENTIDAD — NIVEL CAM-03</p>
+      </section>
+
+      <div class="instruccion-operativa">
+        <p>INGRESE LAS CREDENCIALES ASIGNADAS PARA ESTE EXPEDIENTE.</p>
+        <p>EL SISTEMA VERIFICARÁ SU AUTORIZACIÓN ANTES DE CONCEDER ACCESO.</p>
+      </div>
+
+      <form id="form-auth" class="form-auth" novalidate autocomplete="off">
+
+        <div class="form-campo">
+          <label class="form-campo__etiqueta" for="campo-expediente">
+            NÚMERO DE EXPEDIENTE
+          </label>
+          <div class="form-campo__input-wrapper">
+            <span class="form-campo__prefijo">ID</span>
+            <input
+              type="text"
+              id="campo-expediente"
+              name="numeroExpediente"
+              class="form-campo__input"
+              placeholder="CSC-2026-MB-000"
+              autocomplete="off"
+              spellcheck="false"
+              maxlength="20"
+            />
+          </div>
+          <p class="form-campo__hint">FORMATO: CSC-2026-MB-XXX</p>
+          <p class="form-campo__error" id="expediente-error"></p>
+        </div>
+
+        <div class="form-campo">
+          <label class="form-campo__etiqueta" for="campo-codigo">
+            CÓDIGO DE AUTORIZACIÓN
+          </label>
+          <div class="form-campo__input-wrapper">
+            <span class="form-campo__prefijo">COD</span>
+            <input
+              type="text"
+              id="campo-codigo"
+              name="codigo"
+              class="form-campo__input"
+              placeholder="XXXXXXXX"
+              autocomplete="off"
+              spellcheck="false"
+              maxlength="12"
+            />
+          </div>
+          <p class="form-campo__hint">CÓDIGO ASIGNADO POR LA COORDINACIÓN</p>
+          <p class="form-campo__error" id="codigo-error"></p>
+        </div>
+
+        <div id="auth-error-global" class="error-global" hidden></div>
+
+        <div id="auth-procesando" class="procesando" hidden>
+          <span class="procesando__dot"></span>
+          <span class="procesando__dot"></span>
+          <span class="procesando__dot"></span>
+          <span>VERIFICANDO CREDENCIALES...</span>
+        </div>
+
+        <div class="form-acciones">
+          <button type="button" id="btn-regresar" class="btn-inst btn-inst--secundario">
+            ◀ REGRESAR
+          </button>
+          <button type="submit" id="btn-autenticar" class="btn-inst btn-inst--primario">
+            <span class="btn-inst__icono">▶</span>
+            VERIFICAR CREDENCIALES
+          </button>
+        </div>
+
+      </form>
+
+      <div class="nota-legal">
+        <p>INTENTOS FALLIDOS DE AUTENTICACIÓN SON REGISTRADOS Y REPORTADOS.</p>
+        <p>EL ACCESO QUEDA CONDICIONADO A LA VALIDACIÓN EXITOSA DE AMBOS CAMPOS.</p>
+      </div>
+
+    </main>
+
+    <footer class="sys-footer">
+      <span>MÓDULO DE AUTENTICACIÓN v2.1</span>
+      <span class="sys-footer__sep">|</span>
+      <span>PROTOCOLO DE CIFRADO ACTIVO</span>
+    </footer>
+
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- PANTALLA DE CREDENCIAL — IDENTIDAD CONFIRMADA                      -->
+  <!-- ================================================================== -->
+  <div id="screen-credencial" class="screen screen-credencial">
+
+    <header class="sys-header">
+      <div class="sys-header__badge">CLASIFICADO</div>
+      <div class="sys-header__org">MM&amp;A PRODUCTION STUDIOS</div>
+      <div class="sys-header__divider"></div>
+    </header>
+
+    <main class="credencial-main">
+
+      <section class="confirmacion-header">
+        <div class="confirmacion-estado">
+          <div class="confirmacion-icono">✓</div>
+          <div class="confirmacion-textos">
+            <p class="confirmacion-titulo">IDENTIDAD CONFIRMADA</p>
+            <p class="confirmacion-sub">Registro localizado. Coincidencia encontrada. Evaluador autorizado.</p>
+          </div>
+        </div>
+        <div class="confirmacion-timestamp" id="confirmacion-timestamp"></div>
+      </section>
+
+      <!-- Tarjeta de identificación -->
+      <section class="tarjeta-evaluador" id="tarjeta-evaluador">
+
+        <div class="tarjeta-evaluador__header">
+          <div class="tarjeta-evaluador__header-texto">
+            <p class="tarjeta-evaluador__org">CENTRO DE DOCUMENTACIÓN — MM&amp;A PRODUCTION STUDIOS</p>
+            <p class="tarjeta-evaluador__tipo">CREDENCIAL DE EVALUADOR</p>
+            <p class="tarjeta-evaluador__expediente">EXPEDIENTE CSC-2026-MB</p>
+          </div>
+          <div class="tarjeta-evaluador__nivel" id="cred-nivel"></div>
+        </div>
+
+        <div class="tarjeta-evaluador__cuerpo">
+
+          <div class="tarjeta-evaluador__foto-col">
+            <div class="tarjeta-evaluador__foto-wrapper">
+              <img
+                id="cred-foto"
+                class="tarjeta-evaluador__foto"
+                src=""
+                alt="Fotografía del evaluador"
+                onerror="this.style.display='none'; document.getElementById('cred-foto-fallback').style.display='flex';"
+              />
+              <div id="cred-foto-fallback" class="tarjeta-evaluador__foto-fallback">
+                <span>SIN</span><span>IMAGEN</span>
+              </div>
+            </div>
+            <div class="tarjeta-evaluador__foto-sello">FOTOGRAFÍA OFICIAL</div>
+          </div>
+
+          <div class="tarjeta-evaluador__datos">
+
+            <div class="dato-row dato-row--nombre">
+              <span class="dato-label">NOMBRE COMPLETO</span>
+              <span class="dato-valor dato-valor--destacado" id="cred-nombre"></span>
+            </div>
+            <div class="dato-row">
+              <span class="dato-label">TÍTULO PROFESIONAL</span>
+              <span class="dato-valor" id="cred-titulo"></span>
+            </div>
+            <div class="dato-row">
+              <span class="dato-label">ESPECIALIDAD</span>
+              <span class="dato-valor" id="cred-especialidad"></span>
+            </div>
+            <div class="dato-row">
+              <span class="dato-label">CATEGORÍA</span>
+              <span class="dato-valor" id="cred-categoria"></span>
+            </div>
+
+            <div class="dato-separator"></div>
+
+            <div class="dato-row">
+              <span class="dato-label">CIUDAD</span>
+              <span class="dato-valor" id="cred-ciudad"></span>
+            </div>
+            <div class="dato-row">
+              <span class="dato-label">ESTADO / PROVINCIA</span>
+              <span class="dato-valor" id="cred-estado-geo"></span>
+            </div>
+            <div class="dato-row">
+              <span class="dato-label">PAÍS</span>
+              <span class="dato-valor" id="cred-pais"></span>
+            </div>
+
+            <div class="dato-separator"></div>
+
+            <div class="dato-row">
+              <span class="dato-label">CORREO REGISTRADO</span>
+              <span class="dato-valor dato-valor--redactado" id="cred-email"></span>
+            </div>
+            <div class="dato-row">
+              <span class="dato-label">CONTACTO REGISTRADO</span>
+              <span class="dato-valor dato-valor--redactado" id="cred-telefono"></span>
+            </div>
+
+            <div class="dato-separator"></div>
+
+            <div class="dato-row">
+              <span class="dato-label">NIVEL DE AUTORIZACIÓN</span>
+              <span class="dato-valor dato-valor--nivel" id="cred-nivel-texto"></span>
+            </div>
+            <div class="dato-row">
+              <span class="dato-label">ESTADO DEL REGISTRO</span>
+              <span class="dato-valor dato-valor--activo" id="cred-estado-registro"></span>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="tarjeta-evaluador__mensaje" id="cred-mensaje-wrapper" hidden>
+          <p class="tarjeta-evaluador__mensaje-label">OBSERVACIÓN INSTITUCIONAL</p>
+          <p class="tarjeta-evaluador__mensaje-texto" id="cred-mensaje"></p>
+        </div>
+
+        <div class="tarjeta-evaluador__footer">
+          <div class="tarjeta-evaluador__footer-dato">
+            <span class="dato-label">ÚLTIMA VERIFICACIÓN</span>
+            <span id="cred-ultimo-acceso"></span>
+          </div>
+          <div class="tarjeta-evaluador__footer-dato">
+            <span class="dato-label">EVALUACIÓN REGISTRADA</span>
+            <span id="cred-evaluacion-realizada"></span>
+          </div>
+          <div class="tarjeta-evaluador__sello">CSC-2026-MB</div>
+        </div>
+
+      </section>
+
+      <div class="accion-expediente">
+        <p class="accion-expediente__instruccion">
+          SU NIVEL DE AUTORIZACIÓN PERMITE EL ACCESO AL EXPEDIENTE COMPLETO.
+        </p>
+        <button id="btn-consultar" class="btn-inst btn-inst--primario btn-inst--grande" type="button">
+          <span class="btn-inst__icono">▶</span>
+          CONSULTAR EXPEDIENTE
+        </button>
+      </div>
+
+    </main>
+
+    <footer class="sys-footer">
+      <span>CREDENCIAL VERIFICADA</span>
+      <span class="sys-footer__sep">|</span>
+      <span>ACCESO NIVEL CAM-03</span>
+      <span class="sys-footer__sep">|</span>
+      <span id="cred-session-stamp">—</span>
+    </footer>
+
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- PANTALLA DEL EXPEDIENTE                                             -->
+  <!-- ================================================================== -->
+  <div id="screen-expediente" class="screen screen-expediente">
+
+    <header class="exp-header">
+      <div class="exp-header__top">
+        <div class="exp-header__badge-conjunto">
+          <span class="sys-header__badge">CLASIFICADO</span>
+          <span class="sys-header__badge sys-header__badge--nivel">CAM-03</span>
+        </div>
+        <div class="exp-header__org">MM&amp;A PRODUCTION STUDIOS</div>
+        <button id="btn-cerrar-sesion" class="btn-inst btn-inst--ghost btn-inst--pequeño" type="button">
+          CERRAR SESIÓN ✕
+        </button>
+      </div>
+      <div class="exp-header__divider"></div>
+    </header>
+
+    <main class="exp-main">
+
+      <section class="exp-portada">
+        <div class="exp-portada__codigo">EXPEDIENTE CSC-2026-MB</div>
+        <h1 class="exp-portada__titulo">EL COLAPSO DEL SENTIDO COMÚN</h1>
+        <div class="exp-portada__subtitulo">Entre Mentadas y Verdades</div>
+        <div class="exp-portada__produccion">MM&amp;A Production Studios</div>
+
+        <div class="exp-portada__meta">
+          <div class="exp-meta-item">
+            <span class="exp-meta-label">EVALUADOR</span>
+            <span id="exp-nombre-evaluador" class="exp-meta-valor"></span>
+          </div>
+          <div class="exp-meta-item">
+            <span class="exp-meta-label">FECHA DE ACCESO</span>
+            <span id="exp-fecha-acceso" class="exp-meta-valor"></span>
+          </div>
+          <div class="exp-meta-item">
+            <span class="exp-meta-label">CLASIFICACIÓN</span>
+            <span class="exp-meta-valor">CAM-03 / RESTRINGIDO</span>
+          </div>
+        </div>
+
+        <div class="exp-portada__divider">
+          <span class="exp-portada__divider-sello">⬥ DESCLASIFICADO PARA EVALUACIÓN ⬥</span>
+        </div>
+      </section>
+
+      <!-- Observación preliminar -->
+      <section class="obs-preliminar">
+        <div class="obs-preliminar__header">
+          <span class="obs-preliminar__codigo">OBS-PREL-001</span>
+          <h2 class="obs-preliminar__titulo">OBSERVACIÓN PRELIMINAR</h2>
+          <span class="obs-preliminar__clasificacion">NIVEL CAM-03</span>
+        </div>
+        <blockquote class="obs-preliminar__texto">
+          <p>
+            Toda sociedad deja evidencia de aquello que decide ignorar.
+          </p>
+          <p>
+            El sentido común no desaparece; primero deja de reconocerse y después
+            deja un rastro; y la evidencia rara vez resulta cómoda.
+          </p>
+        </blockquote>
+      </section>
+
+      <div class="instruccion-consulta">
+        <p>
+          LAS SIGUIENTES EVIDENCIAS CONFORMAN EL EXPEDIENTE COMPLETO. CADA EVIDENCIA
+          DEBE SER CONSULTADA EN SU TOTALIDAD ANTES DE PROCEDER CON LA EVALUACIÓN.
+        </p>
+      </div>
+
+      <!-- Listado de evidencias (generado dinámicamente) -->
+      <section class="evidencias-lista" id="evidencias-lista">
+        <div class="evidencias-cargando" id="evidencias-cargando">
+          <span class="procesando__dot"></span>
+          <span class="procesando__dot"></span>
+          <span class="procesando__dot"></span>
+          <span>RECUPERANDO EVIDENCIAS DEL SISTEMA...</span>
+        </div>
+      </section>
+
+      <!-- Formulario de evaluación -->
+      <section class="seccion-evaluacion" id="seccion-evaluacion">
+
+        <div class="seccion-evaluacion__header">
+          <span class="seccion-evaluacion__codigo">FORM-EVAL-CSC-2026</span>
+          <h2 class="seccion-evaluacion__titulo">REGISTRO DE EVALUACIÓN</h2>
+          <span class="seccion-evaluacion__estado" id="eval-estado">PENDIENTE</span>
+        </div>
+
+        <div class="instruccion-operativa">
+          <p>COMPLETE TODOS LOS CAMPOS. SU EVALUACIÓN SERÁ REGISTRADA EN EL SISTEMA.</p>
+          <p>UNA VEZ ENVIADA, NO PODRÁ SER MODIFICADA SIN AUTORIZACIÓN DE COORDINACIÓN.</p>
+        </div>
+
+        <form id="form-evaluacion" class="form-evaluacion" novalidate>
+
+          <div class="form-campo">
+            <label class="form-campo__etiqueta">
+              CALIFICACIÓN GENERAL <span class="form-campo__requerido">*</span>
+            </label>
+            <div class="calificacion-selector">
+              <div id="eval-calificacion" class="calificacion-numeros"></div>
+              <p class="form-campo__hint">SELECCIONE UNA PUNTUACIÓN DEL 1 AL 10</p>
+            </div>
+          </div>
+
+          <div class="form-campo">
+            <label class="form-campo__etiqueta" for="eval-observaciones">
+              OBSERVACIONES GENERALES <span class="form-campo__requerido">*</span>
+            </label>
+            <textarea
+              id="eval-observaciones"
+              name="observaciones"
+              class="form-campo__textarea"
+              placeholder="REGISTRE SUS OBSERVACIONES GENERALES SOBRE EL EXPEDIENTE..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="form-campo">
+            <label class="form-campo__etiqueta" for="eval-fortalezas">
+              FORTALEZAS IDENTIFICADAS
+            </label>
+            <textarea
+              id="eval-fortalezas"
+              name="fortalezas"
+              class="form-campo__textarea"
+              placeholder="REGISTRE LOS ASPECTOS POSITIVOS Y PUNTOS FUERTES DETECTADOS..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="form-campo">
+            <label class="form-campo__etiqueta" for="eval-mejoras">
+              ASPECTOS A MEJORAR
+            </label>
+            <textarea
+              id="eval-mejoras"
+              name="mejoras"
+              class="form-campo__textarea"
+              placeholder="REGISTRE LOS ASPECTOS QUE REQUIEREN ATENCIÓN O MEJORA..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="form-campo">
+            <label class="form-campo__etiqueta" for="eval-comentario">
+              COMENTARIO FINAL <span class="form-campo__requerido">*</span>
+            </label>
+            <textarea
+              id="eval-comentario"
+              name="comentarioFinal"
+              class="form-campo__textarea"
+              placeholder="EMITA SU DICTAMEN FINAL SOBRE EL EXPEDIENTE..."
+              rows="5"
+            ></textarea>
+          </div>
+
+          <div id="eval-error" class="error-global" hidden></div>
+          <div id="eval-exito" class="exito-global" hidden></div>
+
+          <div class="form-acciones form-acciones--evaluacion">
+            <button type="submit" id="btn-registrar-evaluacion" class="btn-inst btn-inst--primario btn-inst--grande">
+              <span class="btn-inst__icono">▶</span>
+              REGISTRAR EVALUACIÓN
+            </button>
+          </div>
+
+          <div class="nota-legal">
+            <p>
+              AL REGISTRAR SU EVALUACIÓN, DECLARA QUE HA CONSULTADO LA TOTALIDAD
+              DEL EXPEDIENTE Y QUE SU CRITERIO ES EMITIDO DE FORMA INDEPENDIENTE
+              Y CONFORME A SU ESPECIALIDAD PROFESIONAL.
+            </p>
+          </div>
+
+        </form>
+      </section>
+
+    </main>
+
+    <footer class="sys-footer">
+      <span id="exp-footer-evaluador">EVALUADOR: —</span>
+      <span class="sys-footer__sep">|</span>
+      <span>EXPEDIENTE CSC-2026-MB</span>
+      <span class="sys-footer__sep">|</span>
+      <span id="exp-footer-fecha">—</span>
+    </footer>
+
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- PUNTO DE ENTRADA — módulo principal JS                             -->
+  <!-- ================================================================== -->
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>

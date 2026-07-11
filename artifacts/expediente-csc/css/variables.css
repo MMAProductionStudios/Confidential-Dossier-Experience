@@ -1,0 +1,106 @@
+/**
+ * variables.css
+ * ─────────────────────────────────────────────────────────────────────────────
+ * VARIABLES GLOBALES DEL SISTEMA — EXPEDIENTE CSC-2026-MB
+ *
+ * Todas las constantes visuales se definen aquí: paleta cromática,
+ * tipografías, espaciados, bordes y animaciones.
+ * Este archivo es la única fuente de verdad para los valores de diseño.
+ *
+ * Para modificar el aspecto visual del sistema, editar únicamente este archivo.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+:root {
+
+  /* ── Paleta cromática principal ──────────────────────────────────────── */
+
+  /* Fondos */
+  --color-fondo-base:       #0a0a0a;   /* Negro principal del sistema       */
+  --color-fondo-elevado:    #111111;   /* Superficie elevada (tarjetas)     */
+  --color-fondo-panel:      #141414;   /* Paneles de información            */
+  --color-fondo-input:      #0d0d0d;   /* Fondo de campos de formulario     */
+  --color-fondo-hover:      #1a1a1a;   /* Estado hover de elementos         */
+
+  /* Textos */
+  --color-texto-primario:   #d4d4d4;   /* Texto principal                   */
+  --color-texto-secundario: #7a7a7a;   /* Texto secundario / etiquetas      */
+  --color-texto-apagado:    #4a4a4a;   /* Texto desactivado / hints         */
+  --color-texto-inverso:    #0a0a0a;   /* Texto sobre fondos claros         */
+
+  /* Bordes */
+  --color-borde-primario:   #2a2a2a;   /* Borde principal (oscuro)          */
+  --color-borde-secundario: #1e1e1e;   /* Borde sutil                       */
+  --color-borde-activo:     #4a4a4a;   /* Borde de elemento activo/enfocado */
+  --color-borde-marcado:    #5a5a5a;   /* Borde de elemento marcado         */
+
+  /* Estados operativos — verde institucional tenue */
+  --color-operativo:        #3a6b4a;   /* Verde: estado operativo activo    */
+  --color-operativo-texto:  #6aab7a;   /* Verde claro: texto operativo      */
+  --color-operativo-bg:     #0d1f12;   /* Verde muy oscuro: fondo operativo */
+
+  /* Advertencias — rojo institucional para alertas únicamente */
+  --color-alerta:           #8b1a1a;   /* Rojo: advertencias y errores      */
+  --color-alerta-texto:     #c44a4a;   /* Rojo claro: texto de alerta       */
+  --color-alerta-bg:        #1a0808;   /* Rojo muy oscuro: fondo de alerta  */
+
+  /* Acento neutro — para destacar sin llamar la atención */
+  --color-acento:           #c8a96e;   /* Dorado apagado: número expediente */
+  --color-acento-apagado:   #6e5a3a;   /* Dorado oscuro: variante sutil     */
+
+  /* ── Tipografías ─────────────────────────────────────────────────────── */
+
+  /* Fuente principal: monoespaciada institucional */
+  --fuente-mono:    'IBM Plex Mono', 'Courier Prime', 'Courier New', monospace;
+
+  /* Fuente de sello/título: tipografía de máquina de escribir */
+  --fuente-sello:   'Special Elite', 'Courier Prime', serif;
+
+  /* Fuente de documentos: para párrafos largos */
+  --fuente-doc:     'Courier Prime', 'Courier New', monospace;
+
+  /* ── Escalas tipográficas ─────────────────────────────────────────────── */
+  --texto-xxs:    0.625rem;   /* 10px — pie de página, códigos        */
+  --texto-xs:     0.6875rem;  /* 11px — etiquetas, hints              */
+  --texto-sm:     0.75rem;    /* 12px — texto secundario              */
+  --texto-base:   0.8125rem;  /* 13px — texto base del sistema        */
+  --texto-md:     0.875rem;   /* 14px — texto cuerpo                  */
+  --texto-lg:     1rem;       /* 16px — texto destacado               */
+  --texto-xl:     1.125rem;   /* 18px — subtítulos                    */
+  --texto-2xl:    1.25rem;    /* 20px — títulos secundarios           */
+  --texto-3xl:    1.5rem;     /* 24px — títulos principales           */
+  --texto-4xl:    1.875rem;   /* 30px — títulos de portada            */
+  --texto-5xl:    2.25rem;    /* 36px — títulos heroicos              */
+
+  /* ── Espaciados ──────────────────────────────────────────────────────── */
+  --espacio-1:   0.25rem;   /* 4px  */
+  --espacio-2:   0.5rem;    /* 8px  */
+  --espacio-3:   0.75rem;   /* 12px */
+  --espacio-4:   1rem;      /* 16px */
+  --espacio-5:   1.25rem;   /* 20px */
+  --espacio-6:   1.5rem;    /* 24px */
+  --espacio-8:   2rem;      /* 32px */
+  --espacio-10:  2.5rem;    /* 40px */
+  --espacio-12:  3rem;      /* 48px */
+  --espacio-16:  4rem;      /* 64px */
+
+  /* ── Bordes ─────────────────────────────────────────────────────────── */
+  --radio-sm:    2px;    /* Borde levemente redondeado (casi cuadrado) */
+  --radio-md:    3px;    /* Estilo institucional — nunca muy redondo   */
+
+  /* ── Transiciones ───────────────────────────────────────────────────── */
+  /* Las animaciones deben ser discretas y funcionales, nunca decorativas */
+  --transicion-rapida:  150ms ease;
+  --transicion-normal:  250ms ease;
+  --transicion-lenta:   400ms ease;
+
+  /* ── Z-índices ───────────────────────────────────────────────────────── */
+  --z-base:      1;
+  --z-elevado:   10;
+  --z-overlay:   100;
+  --z-modal:     1000;
+
+  /* ── Dimensiones de contenedor ───────────────────────────────────────── */
+  --ancho-max:      860px;    /* Ancho máximo del contenido principal    */
+  --ancho-tarjeta:  760px;    /* Ancho máximo de la tarjeta del evaluador */
+}

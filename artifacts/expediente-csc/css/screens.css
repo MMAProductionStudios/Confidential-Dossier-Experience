@@ -1,0 +1,862 @@
+/**
+ * screens.css
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ESTILOS POR PANTALLA — EXPEDIENTE CSC-2026-MB
+ *
+ * Cada sección corresponde a una pantalla del sistema (SPA):
+ *   1. Pantalla de arranque (boot)
+ *   2. Pantalla de inicio
+ *   3. Pantalla de autenticación
+ *   4. Pantalla de credencial
+ *   5. Pantalla del expediente
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/* ════════════════════════════════════════════════════════════════════════════ */
+/* 1. PANTALLA DE ARRANQUE — Secuencia de inicialización del sistema           */
+/* ════════════════════════════════════════════════════════════════════════════ */
+
+.screen-boot {
+  background-color: var(--color-fondo-base);
+  align-items:      center;
+  justify-content:  center;
+  flex-direction:   column;
+  min-height:       100vh;
+}
+
+.boot-container {
+  width:      100%;
+  max-width:  560px;
+  padding:    var(--espacio-8) var(--espacio-6);
+}
+
+/* Logotipo de arranque */
+.boot-logo {
+  font-family:    var(--fuente-sello);
+  font-size:      var(--texto-3xl);
+  letter-spacing: 0.3em;
+  color:          var(--color-texto-secundario);
+  text-align:     center;
+  margin-bottom:  var(--espacio-8);
+  opacity:        0.5;
+}
+
+/* Log de arranque — líneas que aparecen progresivamente */
+.boot-log {
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-sm);
+  letter-spacing: 0.05em;
+  color:          var(--color-operativo-texto);
+  line-height:    1.8;
+  min-height:     200px;
+}
+
+/* Cada línea del log de arranque */
+.boot-linea {
+  display:    block;
+  animation:  aparecer 0.1s ease forwards;
+  opacity:    0;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.boot-linea--ok {
+  color: var(--color-operativo-texto);
+}
+
+.boot-linea--info {
+  color: var(--color-texto-secundario);
+}
+
+.boot-linea--alerta {
+  color: var(--color-alerta-texto);
+}
+
+.boot-linea--separador {
+  color:   var(--color-borde-activo);
+  opacity: 0.5;
+}
+
+/* Cursor parpadeante al final del log */
+.boot-cursor {
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-md);
+  color:          var(--color-operativo-texto);
+  margin-top:     var(--espacio-2);
+  animation:      cursor-parpadeo 1s step-end infinite;
+}
+
+@keyframes cursor-parpadeo {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════ */
+/* 2. PANTALLA DE INICIO — Centro de Documentación                            */
+/* ════════════════════════════════════════════════════════════════════════════ */
+
+.screen-inicio {
+  flex-direction: column;
+}
+
+.inicio-main {
+  flex:            1;
+  max-width:       var(--ancho-max);
+  width:           100%;
+  margin:          0 auto;
+  padding:         var(--espacio-8) var(--espacio-6);
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  gap:             var(--espacio-8);
+}
+
+/* Bloque de identificación del sistema */
+.sistema-id {
+  text-align:     center;
+  border-bottom:  1px solid var(--color-borde-secundario);
+  padding-bottom: var(--espacio-6);
+  width:          100%;
+}
+
+.sistema-id__label {
+  font-size:      var(--texto-lg);
+  font-weight:    600;
+  letter-spacing: 0.25em;
+  color:          var(--color-texto-primario);
+  text-transform: uppercase;
+}
+
+.sistema-id__sublabel {
+  font-size:      var(--texto-sm);
+  letter-spacing: 0.2em;
+  color:          var(--color-texto-secundario);
+  text-transform: uppercase;
+  margin-top:     var(--espacio-2);
+}
+
+/* Sello principal del expediente */
+.expediente-sello {
+  text-align:       center;
+  padding:          var(--espacio-8) var(--espacio-6);
+  border:           1px solid var(--color-borde-primario);
+  background-color: var(--color-fondo-panel);
+  width:            100%;
+  position:         relative;
+  /* Efecto de sello anguloso */
+}
+
+/* Esquinas decorativas del sello */
+.expediente-sello::before,
+.expediente-sello::after {
+  content:          '';
+  position:         absolute;
+  width:            20px;
+  height:           20px;
+  border-color:     var(--color-acento-apagado);
+  border-style:     solid;
+}
+
+.expediente-sello::before {
+  top:          -1px;
+  left:         -1px;
+  border-width: 2px 0 0 2px;
+}
+
+.expediente-sello::after {
+  bottom:       -1px;
+  right:        -1px;
+  border-width: 0 2px 2px 0;
+}
+
+.sello-codigo {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.3em;
+  color:          var(--color-acento);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-5);
+  font-weight:    600;
+}
+
+.sello-titulo-principal {
+  font-family:    var(--fuente-sello);
+  font-size:      var(--texto-4xl);
+  letter-spacing: 0.05em;
+  color:          var(--color-texto-primario);
+  line-height:    1.2;
+  margin-bottom:  var(--espacio-3);
+}
+
+.sello-subtitulo {
+  font-family:    var(--fuente-sello);
+  font-size:      var(--texto-xl);
+  color:          var(--color-texto-secundario);
+  font-style:     italic;
+  margin-bottom:  var(--espacio-5);
+}
+
+.sello-produccion {
+  font-size:      var(--texto-sm);
+  letter-spacing: 0.2em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+}
+
+/* Panel de estado del sistema */
+.estado-panel {
+  width:            100%;
+  background-color: var(--color-fondo-panel);
+  border:           1px solid var(--color-borde-primario);
+}
+
+.estado-row {
+  display:          flex;
+  align-items:      center;
+  justify-content:  space-between;
+  padding:          var(--espacio-3) var(--espacio-5);
+  border-bottom:    1px solid var(--color-borde-secundario);
+  gap:              var(--espacio-4);
+  flex-wrap:        wrap;
+}
+
+.estado-row:last-child {
+  border-bottom: none;
+}
+
+.estado-label {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.12em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+}
+
+.estado-valor {
+  font-size:      var(--texto-sm);
+  letter-spacing: 0.1em;
+  color:          var(--color-texto-primario);
+  font-weight:    600;
+  text-transform: uppercase;
+  display:        flex;
+  align-items:    center;
+  gap:            var(--espacio-2);
+}
+
+/* Estado OPERATIVO con indicador verde pulsante */
+.estado-valor--operativo {
+  color: var(--color-operativo-texto);
+}
+
+.estado-dot {
+  width:            8px;
+  height:           8px;
+  border-radius:    50%;
+  background-color: var(--color-operativo-texto);
+  flex-shrink:      0;
+  animation:        pulso 2s ease-in-out infinite;
+}
+
+@keyframes pulso {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* Advertencia de acceso */
+.advertencia-acceso {
+  width:            100%;
+  background-color: var(--color-alerta-bg);
+  border:           1px solid var(--color-alerta);
+  border-left:      3px solid var(--color-alerta-texto);
+  padding:          var(--espacio-4) var(--espacio-5);
+  display:          flex;
+  gap:              var(--espacio-4);
+  align-items:      flex-start;
+}
+
+.advertencia-acceso__ico {
+  color:       var(--color-alerta-texto);
+  font-size:   var(--texto-xl);
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.advertencia-acceso__texto {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.06em;
+  color:          var(--color-alerta-texto);
+  line-height:    1.7;
+}
+
+/* Zona de acción principal */
+.accion-principal {
+  display:        flex;
+  justify-content: center;
+  padding:        var(--espacio-4) 0 var(--espacio-8);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════ */
+/* 3. PANTALLA DE AUTENTICACIÓN                                                */
+/* ════════════════════════════════════════════════════════════════════════════ */
+
+.screen-auth {
+  flex-direction: column;
+}
+
+.auth-main {
+  flex:            1;
+  max-width:       560px;
+  width:           100%;
+  margin:          0 auto;
+  padding:         var(--espacio-8) var(--espacio-6);
+  display:         flex;
+  flex-direction:  column;
+}
+
+/* Título del módulo */
+.modulo-titulo {
+  text-align:     center;
+  margin-bottom:  var(--espacio-6);
+  padding-bottom: var(--espacio-6);
+  border-bottom:  1px solid var(--color-borde-secundario);
+}
+
+.modulo-titulo__sistema {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.2em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-2);
+}
+
+.modulo-titulo__nombre {
+  font-size:      var(--texto-2xl);
+  font-weight:    700;
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-primario);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-2);
+}
+
+.modulo-titulo__sub {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.1em;
+  color:          var(--color-texto-secundario);
+  text-transform: uppercase;
+}
+
+/* Formulario de autenticación */
+.form-auth {
+  margin-top: var(--espacio-4);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════ */
+/* 4. PANTALLA DE CREDENCIAL                                                   */
+/* ════════════════════════════════════════════════════════════════════════════ */
+
+.screen-credencial {
+  flex-direction: column;
+}
+
+.credencial-main {
+  flex:            1;
+  max-width:       var(--ancho-tarjeta);
+  width:           100%;
+  margin:          0 auto;
+  padding:         var(--espacio-6) var(--espacio-6) var(--espacio-10);
+  display:         flex;
+  flex-direction:  column;
+  gap:             var(--espacio-6);
+}
+
+/* Encabezado de confirmación */
+.confirmacion-header {
+  display:          flex;
+  align-items:      flex-start;
+  justify-content:  space-between;
+  gap:              var(--espacio-4);
+  padding:          var(--espacio-4) var(--espacio-5);
+  background-color: var(--color-operativo-bg);
+  border:           1px solid var(--color-operativo);
+  flex-wrap:        wrap;
+}
+
+.confirmacion-estado {
+  display:     flex;
+  align-items: center;
+  gap:         var(--espacio-4);
+}
+
+.confirmacion-icono {
+  width:            40px;
+  height:           40px;
+  background-color: var(--color-operativo);
+  color:            var(--color-texto-primario);
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-size:        var(--texto-xl);
+  font-weight:      700;
+  flex-shrink:      0;
+}
+
+.confirmacion-titulo {
+  font-size:      var(--texto-lg);
+  font-weight:    700;
+  letter-spacing: 0.15em;
+  color:          var(--color-operativo-texto);
+  text-transform: uppercase;
+}
+
+.confirmacion-sub {
+  font-size:      var(--texto-sm);
+  letter-spacing: 0.05em;
+  color:          var(--color-texto-secundario);
+  margin-top:     var(--espacio-1);
+}
+
+.confirmacion-timestamp {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.08em;
+  color:          var(--color-texto-apagado);
+  text-align:     right;
+  line-height:    1.8;
+}
+
+/* ── Tarjeta del evaluador ── */
+.tarjeta-evaluador {
+  border:           1px solid var(--color-borde-primario);
+  background-color: var(--color-fondo-panel);
+  overflow:         hidden;
+}
+
+.tarjeta-evaluador__header {
+  display:          flex;
+  align-items:      flex-start;
+  justify-content:  space-between;
+  padding:          var(--espacio-4) var(--espacio-5);
+  background-color: var(--color-fondo-elevado);
+  border-bottom:    1px solid var(--color-borde-primario);
+  gap:              var(--espacio-4);
+  flex-wrap:        wrap;
+}
+
+.tarjeta-evaluador__org {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.12em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-1);
+}
+
+.tarjeta-evaluador__tipo {
+  font-size:      var(--texto-sm);
+  font-weight:    700;
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-primario);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-1);
+}
+
+.tarjeta-evaluador__expediente {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.1em;
+  color:          var(--color-acento);
+  text-transform: uppercase;
+}
+
+/* Nivel de autorización en la tarjeta */
+.tarjeta-evaluador__nivel {
+  font-size:        var(--texto-lg);
+  font-weight:      700;
+  letter-spacing:   0.15em;
+  color:            var(--color-acento);
+  border:           1px solid var(--color-acento-apagado);
+  padding:          var(--espacio-2) var(--espacio-4);
+  white-space:      nowrap;
+  background-color: rgba(110, 90, 58, 0.1);
+}
+
+/* Cuerpo de la tarjeta: foto + datos */
+.tarjeta-evaluador__cuerpo {
+  display:   flex;
+  gap:       0;
+  min-height: 300px;
+}
+
+/* Columna de fotografía */
+.tarjeta-evaluador__foto-col {
+  width:            180px;
+  flex-shrink:      0;
+  border-right:     1px solid var(--color-borde-primario);
+  display:          flex;
+  flex-direction:   column;
+  align-items:      center;
+  padding:          var(--espacio-5) var(--espacio-4);
+  background-color: var(--color-fondo-elevado);
+  gap:              var(--espacio-3);
+}
+
+.tarjeta-evaluador__foto-wrapper {
+  width:    140px;
+  height:   170px;
+  border:   1px solid var(--color-borde-primario);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.tarjeta-evaluador__foto {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  object-position: top;
+  display:    block;
+}
+
+.tarjeta-evaluador__foto-fallback {
+  width:            100%;
+  height:           100%;
+  background-color: var(--color-fondo-base);
+  display:          none;
+  flex-direction:   column;
+  align-items:      center;
+  justify-content:  center;
+  color:            var(--color-texto-apagado);
+  font-size:        var(--texto-xxs);
+  letter-spacing:   0.15em;
+  gap:              var(--espacio-1);
+}
+
+.tarjeta-evaluador__foto-sello {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+  text-align:     center;
+}
+
+/* Columna de datos */
+.tarjeta-evaluador__datos {
+  flex:    1;
+  padding: var(--espacio-5);
+}
+
+/* Mensaje personalizado del evaluador */
+.tarjeta-evaluador__mensaje {
+  padding:          var(--espacio-4) var(--espacio-5);
+  border-top:       1px solid var(--color-borde-primario);
+  background-color: rgba(200, 169, 110, 0.03);
+}
+
+.tarjeta-evaluador__mensaje-label {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.2em;
+  color:          var(--color-acento-apagado);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-2);
+}
+
+.tarjeta-evaluador__mensaje-texto {
+  font-family:    var(--fuente-doc);
+  font-size:      var(--texto-sm);
+  color:          var(--color-texto-secundario);
+  line-height:    1.8;
+  font-style:     italic;
+}
+
+/* Pie de la tarjeta */
+.tarjeta-evaluador__footer {
+  display:          flex;
+  align-items:      center;
+  justify-content:  space-between;
+  padding:          var(--espacio-3) var(--espacio-5);
+  background-color: var(--color-fondo-elevado);
+  border-top:       1px solid var(--color-borde-primario);
+  flex-wrap:        wrap;
+  gap:              var(--espacio-3);
+}
+
+.tarjeta-evaluador__footer-dato {
+  display:    flex;
+  gap:        var(--espacio-2);
+  align-items: center;
+  font-size:   var(--texto-xs);
+  letter-spacing: 0.08em;
+}
+
+.tarjeta-evaluador__sello {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.3em;
+  color:          var(--color-acento-apagado);
+  font-weight:    700;
+  text-transform: uppercase;
+}
+
+/* Zona de acción: consultar expediente */
+.accion-expediente {
+  text-align: center;
+  padding:    var(--espacio-4) 0;
+}
+
+.accion-expediente__instruccion {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.08em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-4);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════ */
+/* 5. PANTALLA DEL EXPEDIENTE                                                  */
+/* ════════════════════════════════════════════════════════════════════════════ */
+
+.screen-expediente {
+  flex-direction: column;
+}
+
+/* Encabezado del expediente (diferente al sys-header genérico) */
+.exp-header {
+  background-color: var(--color-fondo-base);
+  flex-shrink:      0;
+}
+
+.exp-header__top {
+  display:     flex;
+  align-items: center;
+  gap:         var(--espacio-4);
+  padding:     var(--espacio-3) var(--espacio-6);
+  flex-wrap:   wrap;
+}
+
+.exp-header__badge-conjunto {
+  display:     flex;
+  gap:         var(--espacio-2);
+  align-items: center;
+}
+
+.exp-header__org {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+  flex:           1;
+}
+
+.exp-header__divider {
+  height:           1px;
+  background-color: var(--color-borde-secundario);
+}
+
+/* Cuerpo del expediente */
+.exp-main {
+  flex:           1;
+  max-width:      var(--ancho-max);
+  width:          100%;
+  margin:         0 auto;
+  padding:        var(--espacio-8) var(--espacio-6) var(--espacio-16);
+  display:        flex;
+  flex-direction: column;
+}
+
+/* ── Portada del expediente ── */
+.exp-portada {
+  text-align:     center;
+  margin-bottom:  var(--espacio-10);
+  padding-bottom: var(--espacio-8);
+}
+
+.exp-portada__codigo {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.3em;
+  color:          var(--color-acento);
+  text-transform: uppercase;
+  font-weight:    600;
+  margin-bottom:  var(--espacio-4);
+}
+
+.exp-portada__titulo {
+  font-family:    var(--fuente-sello);
+  font-size:      var(--texto-5xl);
+  letter-spacing: 0.03em;
+  color:          var(--color-texto-primario);
+  line-height:    1.15;
+  margin-bottom:  var(--espacio-3);
+}
+
+.exp-portada__subtitulo {
+  font-family:    var(--fuente-sello);
+  font-size:      var(--texto-2xl);
+  color:          var(--color-texto-secundario);
+  font-style:     italic;
+  margin-bottom:  var(--espacio-4);
+}
+
+.exp-portada__produccion {
+  font-size:      var(--texto-sm);
+  letter-spacing: 0.2em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-6);
+}
+
+/* Metadatos del expediente */
+.exp-portada__meta {
+  display:          flex;
+  justify-content:  center;
+  gap:              var(--espacio-8);
+  flex-wrap:        wrap;
+  padding:          var(--espacio-4) var(--espacio-6);
+  background-color: var(--color-fondo-panel);
+  border:           1px solid var(--color-borde-primario);
+  margin-bottom:    var(--espacio-6);
+}
+
+.exp-meta-item {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--espacio-1);
+  text-align:     center;
+}
+
+.exp-meta-label {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.2em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+}
+
+.exp-meta-valor {
+  font-size:      var(--texto-sm);
+  font-weight:    600;
+  letter-spacing: 0.08em;
+  color:          var(--color-texto-primario);
+}
+
+/* Línea divisoria con sello */
+.exp-portada__divider {
+  display:         flex;
+  align-items:     center;
+  gap:             var(--espacio-4);
+  margin:          0 auto;
+  max-width:       500px;
+}
+
+.exp-portada__divider::before,
+.exp-portada__divider::after {
+  content:          '';
+  flex:             1;
+  height:           1px;
+  background-color: var(--color-borde-secundario);
+}
+
+.exp-portada__divider-sello {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.2em;
+  color:          var(--color-texto-apagado);
+  white-space:    nowrap;
+  text-transform: uppercase;
+}
+
+/* ── Observación preliminar ── */
+.obs-preliminar {
+  margin-bottom:    var(--espacio-8);
+  background-color: var(--color-fondo-panel);
+  border:           1px solid var(--color-borde-primario);
+  border-left:      3px solid var(--color-borde-activo);
+  overflow:         hidden;
+}
+
+.obs-preliminar__header {
+  display:          flex;
+  align-items:      center;
+  gap:              var(--espacio-4);
+  padding:          var(--espacio-3) var(--espacio-5);
+  background-color: var(--color-fondo-elevado);
+  border-bottom:    1px solid var(--color-borde-primario);
+  flex-wrap:        wrap;
+}
+
+.obs-preliminar__codigo {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.15em;
+  color:          var(--color-acento);
+  font-weight:    600;
+}
+
+.obs-preliminar__titulo {
+  font-size:      var(--texto-sm);
+  font-weight:    700;
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-primario);
+  flex:           1;
+}
+
+.obs-preliminar__clasificacion {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-apagado);
+}
+
+.obs-preliminar__texto {
+  padding:       var(--espacio-6) var(--espacio-8);
+  border-left:   none;
+  font-family:   var(--fuente-doc);
+  font-size:     var(--texto-lg);
+  color:         var(--color-texto-primario);
+  line-height:   1.9;
+  font-style:    italic;
+}
+
+.obs-preliminar__texto p + p {
+  margin-top: var(--espacio-4);
+}
+
+/* ── Sección de evaluación ── */
+.seccion-evaluacion {
+  margin-top:       var(--espacio-10);
+  border-top:       2px solid var(--color-borde-primario);
+  padding-top:      var(--espacio-8);
+}
+
+.seccion-evaluacion__header {
+  display:          flex;
+  align-items:      center;
+  gap:              var(--espacio-4);
+  margin-bottom:    var(--espacio-6);
+  flex-wrap:        wrap;
+}
+
+.seccion-evaluacion__codigo {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.2em;
+  color:          var(--color-acento);
+  font-weight:    600;
+}
+
+.seccion-evaluacion__titulo {
+  font-size:      var(--texto-2xl);
+  font-weight:    700;
+  letter-spacing: 0.12em;
+  color:          var(--color-texto-primario);
+  flex:           1;
+}
+
+.seccion-evaluacion__estado {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-apagado);
+  border:         1px solid var(--color-borde-primario);
+  padding:        var(--espacio-1) var(--espacio-3);
+}
+
+.seccion-evaluacion__estado.completado {
+  color:        var(--color-operativo-texto);
+  border-color: var(--color-operativo);
+}
+
+.form-evaluacion {
+  max-width: 680px;
+}

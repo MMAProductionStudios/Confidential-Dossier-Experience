@@ -1,0 +1,218 @@
+/**
+ * responsive.css
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ADAPTACIONES RESPONSIVAS — EXPEDIENTE CSC-2026-MB
+ *
+ * Ajustes para dispositivos móviles y tabletas.
+ * El sistema mantiene su estética institucional en todos los tamaños.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/* ── Tabletas (≤ 768px) ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Encabezados del sistema */
+  .sys-header {
+    padding: var(--espacio-3) var(--espacio-4);
+    flex-wrap: wrap;
+  }
+
+  .sys-footer {
+    padding:   var(--espacio-2) var(--espacio-4);
+    font-size: var(--texto-xxs);
+    flex-wrap: wrap;
+    gap:       var(--espacio-2);
+  }
+
+  /* Pantalla de inicio */
+  .inicio-main {
+    padding: var(--espacio-6) var(--espacio-4);
+    gap:     var(--espacio-6);
+  }
+
+  .sello-titulo-principal {
+    font-size: var(--texto-3xl);
+  }
+
+  .sello-subtitulo {
+    font-size: var(--texto-lg);
+  }
+
+  .estado-row {
+    flex-direction: column;
+    align-items:    flex-start;
+    gap:            var(--espacio-1);
+    padding:        var(--espacio-3) var(--espacio-4);
+  }
+
+  /* Pantalla de autenticación */
+  .auth-main {
+    padding: var(--espacio-6) var(--espacio-4);
+  }
+
+  .form-acciones {
+    flex-direction: column;
+    align-items:    stretch;
+  }
+
+  .form-acciones .btn-inst {
+    justify-content: center;
+  }
+
+  /* Pantalla de credencial */
+  .credencial-main {
+    padding: var(--espacio-4) var(--espacio-4) var(--espacio-8);
+  }
+
+  /* Tarjeta del evaluador: apilada en móvil */
+  .tarjeta-evaluador__cuerpo {
+    flex-direction: column;
+  }
+
+  .tarjeta-evaluador__foto-col {
+    width:        100%;
+    border-right: none;
+    border-bottom: 1px solid var(--color-borde-primario);
+    flex-direction: row;
+    padding:      var(--espacio-4);
+    gap:          var(--espacio-4);
+    align-items:  flex-start;
+  }
+
+  .tarjeta-evaluador__foto-wrapper {
+    width:  100px;
+    height: 120px;
+    flex-shrink: 0;
+  }
+
+  .tarjeta-evaluador__foto-sello {
+    margin-top: var(--espacio-2);
+  }
+
+  .dato-label {
+    width:    120px;
+    font-size: var(--texto-xxs);
+  }
+
+  .dato-valor--destacado {
+    font-size: var(--texto-md);
+  }
+
+  /* Pantalla del expediente */
+  .exp-header__top {
+    padding: var(--espacio-2) var(--espacio-4);
+  }
+
+  .exp-main {
+    padding: var(--espacio-5) var(--espacio-4) var(--espacio-10);
+  }
+
+  .exp-portada__titulo {
+    font-size: var(--texto-3xl);
+  }
+
+  .exp-portada__subtitulo {
+    font-size: var(--texto-xl);
+  }
+
+  .exp-portada__meta {
+    gap:     var(--espacio-4);
+    padding: var(--espacio-3) var(--espacio-4);
+  }
+
+  .obs-preliminar__texto {
+    padding:   var(--espacio-4) var(--espacio-4);
+    font-size: var(--texto-base);
+  }
+
+  .evidencia__header {
+    flex-wrap: wrap;
+    gap:       var(--espacio-2);
+  }
+
+  .evidencia__toggle {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Calificación */
+  .calificacion-numeros {
+    gap: var(--espacio-1);
+  }
+
+  .calificacion-num {
+    width:  36px;
+    height: 36px;
+  }
+
+  /* Boot */
+  .boot-logo {
+    font-size: var(--texto-2xl);
+  }
+
+  .confirmacion-header {
+    flex-direction: column;
+  }
+}
+
+/* ── Móviles pequeños (≤ 480px) ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+
+  .sello-titulo-principal {
+    font-size: var(--texto-2xl);
+  }
+
+  .sello-subtitulo {
+    font-size: var(--texto-base);
+  }
+
+  .accion-principal .btn-inst--primario {
+    padding: var(--espacio-4) var(--espacio-6);
+    font-size: var(--texto-sm);
+  }
+
+  .modulo-titulo__nombre {
+    font-size: var(--texto-xl);
+  }
+
+  .dato-row {
+    flex-direction: column;
+    gap:            var(--espacio-1);
+  }
+
+  .dato-label {
+    width: 100%;
+  }
+
+  .exp-portada__titulo {
+    font-size: var(--texto-2xl);
+  }
+
+  .tarjeta-evaluador__header {
+    flex-direction: column;
+  }
+
+  .tarjeta-evaluador__nivel {
+    align-self: flex-start;
+  }
+
+  .seccion-evaluacion__header {
+    flex-direction: column;
+    align-items:    flex-start;
+  }
+
+  .btn-inst--grande {
+    padding: var(--espacio-4) var(--espacio-6);
+    font-size: var(--texto-sm);
+  }
+}
+
+/* ── Pantallas muy grandes (≥ 1200px) ───────────────────────────────────── */
+@media (min-width: 1200px) {
+  /* El contenido se mantiene centrado con max-width ya definido */
+  .exp-main,
+  .inicio-main {
+    padding-left:  var(--espacio-8);
+    padding-right: var(--espacio-8);
+  }
+}
