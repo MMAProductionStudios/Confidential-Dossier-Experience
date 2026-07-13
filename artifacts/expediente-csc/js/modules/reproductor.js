@@ -3,80 +3,98 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * REPRODUCTOR INSTITUCIONAL DE EVIDENCIAS — EXPEDIENTE CSC-2026-MB
  *
- * Gestiona la reproducción de audio HTML5 con soporte para URLs de
- * Google Drive y otras fuentes externas. El módulo garantiza que
- * solo un reproductor esté activo a la vez.
+ * Soporta:
+ *   - YouTube  (youtube.com/watch?v=ID  o  youtu.be/ID)
+ *   - Google Drive  (drive.google.com/file/d/ID/view)
+ *   - MP3 / OGG / WAV / M4A directos
  *
- * CONFIGURACIÓN DE GOOGLE DRIVE:
- *   Las URLs de Google Drive deben estar en formato de vista previa:
- *   https://drive.google.com/file/d/FILE_ID/view
- *
- *   El módulo las convierte automáticamente al formato de streaming:
- *   https://drive.google.com/uc?export=download&id=FILE_ID
- *
- *   IMPORTANTE: El archivo en Google Drive debe ser compartido como
- *   "Cualquier persona con el enlace puede ver".
- *
- *   ALTERNATIVA: Use uc?export=preview para streaming sin descarga:
- *   https://docs.google.com/uc?export=open&id=FILE_ID
+ * Para YouTube: el archivo debe estar público o sin restricción de embedding.
+ * Para Google Drive: compartir como "Cualquier persona con el enlace puede ver".
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
 
-// ── Estado del reproductor ───────────────────────────────────────────────────
+let reproductorActivo = null;
+
+
+// ── Detección de fuente ───────────────────────────────────────────────────────
 
 /**
- * Referencia al elemento <audio> actualmente activo.
- * Se usa para detener reproducción previa al abrir otra evidencia.
- * @type {HTMLAudioElement|null}
+ * Detecta si la URL es de YouTube.
+ * Soporta: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID
+ *
+ * @param {string} url
+ * @returns {string|null} — El ID de YouTube, o null si no es YouTube
  */
-let reproductorActivo = null;
+function extraerIdYoutube(url) {
+  if (!url || typeof url !== 'string') return null;
+  if (!url.includes('youtube.com') && !url.includes('youtu.be')) return null;
+
+  const patrones = [
+    /[?&]v=([a-zA-Z0-9_-]{11})/,
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+    /\/embed\/([a-zA-Z0-9_-]{11})/,
+  ];
+
+  for (const patron of patrones) {
+    const m = url.match(patron);
+    if (m) return m[1];
+  }
+  return null;
+}
 
 
 /**
  * Convierte una URL de Google Drive al formato compatible con HTML5 Audio.
  *
- * Soporta los siguientes formatos de entrada:
- *   - https://drive.google.com/file/d/FILE_ID/view
- *   - https://drive.google.com/file/d/FILE_ID/view?usp=sharing
- *   - https://drive.google.com/open?id=FILE_ID
- *
- * @param {string} url - URL original de Google Drive
- * @returns {string} — URL en formato de streaming directo
+ * @param {string} url
+ * @returns {string}
  */
 export function convertirUrlGoogleDrive(url) {
   if (!url || typeof url !== 'string') return url;
-
-  // Verificar si es una URL de Google Drive
   if (!url.includes('drive.google.com')) return url;
 
-  // Extraer FILE_ID de formato /file/d/FILE_ID/
   const matchFile = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (matchFile) {
-    const fileId = matchFile[1];
-    // Usar el endpoint de preview para streaming sin forzar descarga
-    return `https://drive.google.com/uc?export=open&id=${fileId}`;
+    return `https://drive.google.com/uc?export=open&id=${matchFile[1]}`;
   }
 
-  // Extraer FILE_ID de formato open?id=FILE_ID
   const matchOpen = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (matchOpen) {
-    const fileId = matchOpen[1];
-    return `https://drive.google.com/uc?export=open&id=${fileId}`;
+    return `https://drive.google.com/uc?export=open&id=${matchOpen[1]}`;
   }
 
-  // Si no se reconoce el formato, devolver la URL original
   return url;
 }
 
 
 /**
- * Crea y renderiza un reproductor de audio HTML5 para una evidencia.
+ * Determina el tipo MIME del archivo de audio según la URL.
  *
- * @param {Object} cancion   - Objeto canción de canciones.json
- * @param {string} cancion.audio - URL del archivo de audio
- * @param {string} cancion.titulo - Título de la pieza
- * @returns {HTMLElement} — Elemento DOM del reproductor listo para insertar
+ * @param {string} url
+ * @returns {string}
+ */
+function determinarTipoAudio(url) {
+  if (!url) return 'audio/mpeg';
+  const u = url.toLowerCase();
+  if (u.includes('.mp3'))  return 'audio/mpeg';
+  if (u.includes('.ogg'))  return 'audio/ogg';
+  if (u.includes('.wav'))  return 'audio/wav';
+  if (u.includes('.m4a'))  return 'audio/mp4';
+  if (u.includes('.aac'))  return 'audio/aac';
+  if (u.includes('.flac')) return 'audio/flac';
+  return 'audio/mpeg';
+}
+
+
+// ── Fábrica de reproductores ──────────────────────────────────────────────────
+
+/**
+ * Crea y renderiza un reproductor de audio/video para una evidencia.
+ * Detecta automáticamente YouTube, Google Drive o MP3 directo.
+ *
+ * @param {Object} cancion - Objeto canción de canciones.json
+ * @returns {HTMLElement}
  */
 export function crearReproductor(cancion) {
   const contenedor = document.createElement('div');
@@ -87,55 +105,47 @@ export function crearReproductor(cancion) {
   label.textContent = 'ARCHIVO DE AUDIO — EVIDENCIA SONORA';
   contenedor.appendChild(label);
 
-  // Verificar si hay URL de audio disponible
-  if (!cancion.audio || cancion.audio.trim() === '') {
-    // Mostrar mensaje de que el audio no está disponible aún
-    const noAudio = document.createElement('div');
-    noAudio.className = 'reproductor__no-audio';
-    noAudio.innerHTML = `
-      <span>⚠</span>
-      <span>ARCHIVO DE AUDIO PENDIENTE DE ASIGNACIÓN. LA URL DEL ARCHIVO SE CONFIGURA EN data/canciones.json</span>
-    `;
-    contenedor.appendChild(noAudio);
+  const url = (cancion.audio || '').trim();
+
+  if (!url) {
+    contenedor.appendChild(crearMensajePendiente());
     return contenedor;
   }
 
-  // Convertir URL de Google Drive si aplica
-  const urlAudio = convertirUrlGoogleDrive(cancion.audio);
+  // ── YouTube ────────────────────────────────────────────────────────────────
+  const youtubeId = extraerIdYoutube(url);
+  if (youtubeId) {
+    contenedor.appendChild(crearEmbedYoutube(youtubeId));
+    return contenedor;
+  }
 
-  // Crear elemento <audio> nativo
-  const audio = document.createElement('audio');
+  // ── Google Drive / MP3 directo ─────────────────────────────────────────────
+  const urlFinal = convertirUrlGoogleDrive(url);
+  const audio    = document.createElement('audio');
   audio.className = 'reproductor__audio';
   audio.controls  = true;
-  audio.preload   = 'metadata'; // Cargar solo metadatos, no el archivo completo
+  audio.preload   = 'metadata';
 
-  // Configurar la fuente de audio
   const source = document.createElement('source');
-  source.src  = urlAudio;
-  source.type = determinarTipoAudio(urlAudio);
+  source.src  = urlFinal;
+  source.type = determinarTipoAudio(urlFinal);
   audio.appendChild(source);
 
-  // Mensaje de fallback para navegadores sin soporte
-  const fallbackText = document.createTextNode(
-    'SU NAVEGADOR NO SOPORTA EL REPRODUCTOR DE AUDIO HTML5.'
-  );
-  audio.appendChild(fallbackText);
-
-  // Evento: detener otros reproductores al reproducir este
   audio.addEventListener('play', () => {
-    detenerReproductorPrevio(audio);
+    if (reproductorActivo && reproductorActivo !== audio) {
+      reproductorActivo.pause();
+      reproductorActivo.currentTime = 0;
+    }
+    reproductorActivo = audio;
   });
 
-  // Evento: manejar errores de carga del audio
   audio.addEventListener('error', () => {
     contenedor.innerHTML = '';
-    contenedor.innerHTML = `
-      <p class="reproductor__label">ARCHIVO DE AUDIO</p>
-      <div class="reproductor__no-audio">
-        <span>⚠</span>
-        <span>NO SE PUDO CARGAR EL ARCHIVO DE AUDIO. VERIFIQUE LA URL EN data/canciones.json Y LOS PERMISOS DE COMPARTICIÓN.</span>
-      </div>
-    `;
+    const lbl2 = document.createElement('p');
+    lbl2.className   = 'reproductor__label';
+    lbl2.textContent = 'ARCHIVO DE AUDIO';
+    contenedor.appendChild(lbl2);
+    contenedor.appendChild(crearMensajeError());
   });
 
   contenedor.appendChild(audio);
@@ -143,49 +153,47 @@ export function crearReproductor(cancion) {
 }
 
 
+// ── Helpers privados ─────────────────────────────────────────────────────────
+
 /**
- * Detiene el reproductor activo previo y registra el nuevo como activo.
+ * Crea un iframe de embed para YouTube.
  *
- * @param {HTMLAudioElement} nuevoAudio - El nuevo reproductor que inicia
+ * @param {string} videoId
+ * @returns {HTMLElement}
  */
-function detenerReproductorPrevio(nuevoAudio) {
-  if (reproductorActivo && reproductorActivo !== nuevoAudio) {
-    reproductorActivo.pause();
-    reproductorActivo.currentTime = 0;
-  }
-  reproductorActivo = nuevoAudio;
+function crearEmbedYoutube(videoId) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'reproductor__youtube';
+
+  const iframe = document.createElement('iframe');
+  iframe.src             = `https://www.youtube.com/embed/${videoId}`;
+  iframe.title           = 'Reproductor de audio YouTube';
+  iframe.allow           = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  iframe.allowFullscreen = true;
+  iframe.loading         = 'lazy';
+  iframe.style.cssText   = 'width:100%; height:80px; border:none;';
+
+  wrapper.appendChild(iframe);
+  return wrapper;
 }
 
+function crearMensajePendiente() {
+  const el = document.createElement('div');
+  el.className = 'reproductor__no-audio';
+  el.innerHTML = `<span>⚠</span><span>ARCHIVO DE AUDIO PENDIENTE. AGREGUE LA URL EN data/canciones.json (SOPORTA YOUTUBE, GOOGLE DRIVE O MP3 DIRECTO)</span>`;
+  return el;
+}
 
-/**
- * Determina el tipo MIME del archivo de audio según la URL.
- * Necesario para el atributo `type` del elemento <source>.
- *
- * @param {string} url - URL del archivo de audio
- * @returns {string} — Tipo MIME (ej: 'audio/mpeg', 'audio/ogg')
- */
-function determinarTipoAudio(url) {
-  if (!url) return 'audio/mpeg';
-
-  const urlLower = url.toLowerCase();
-
-  if (urlLower.includes('.mp3'))  return 'audio/mpeg';
-  if (urlLower.includes('.ogg'))  return 'audio/ogg';
-  if (urlLower.includes('.wav'))  return 'audio/wav';
-  if (urlLower.includes('.m4a'))  return 'audio/mp4';
-  if (urlLower.includes('.aac'))  return 'audio/aac';
-  if (urlLower.includes('.flac')) return 'audio/flac';
-
-  // Para Google Drive y URLs sin extensión, asumir MP3
-  if (url.includes('drive.google.com')) return 'audio/mpeg';
-
-  return 'audio/mpeg';
+function crearMensajeError() {
+  const el = document.createElement('div');
+  el.className = 'reproductor__no-audio';
+  el.innerHTML = `<span>⚠</span><span>NO SE PUDO CARGAR EL AUDIO. VERIFIQUE LA URL Y LOS PERMISOS DE COMPARTICIÓN.</span>`;
+  return el;
 }
 
 
 /**
  * Detiene todos los reproductores activos en la página.
- * Se llama al cerrar el expediente o cerrar sesión.
  */
 export function detenerTodosReproductores() {
   document.querySelectorAll('audio').forEach(audio => {

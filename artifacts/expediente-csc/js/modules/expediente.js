@@ -6,7 +6,7 @@
  * Gestiona la pantalla principal del expediente:
  *   - Renderiza las evidencias (canciones) como tarjetas expandibles
  *   - Muestra el reproductor de audio por cada evidencia
- *   - Gestiona las pestañas de contenido (Historia, Letra, Créditos)
+ *   - Muestra Historia, Letra y Créditos como secciones colapsables debajo
  *   - Puebla los datos del evaluador en la portada del expediente
  * ─────────────────────────────────────────────────────────────────────────────
  */
@@ -44,26 +44,22 @@ export function initExpediente() {
  * Renderiza la pantalla completa del expediente para un usuario dado.
  * Carga las evidencias desde la base de datos y las dibuja en el DOM.
  *
- * @param {Object} usuario - Objeto del usuario autenticado
+ * @param {Object} usuario  - Objeto del usuario autenticado
  * @param {string} idSesion - ID de sesión generado por el módulo de credencial
  */
 export async function renderizarExpediente(usuario, idSesion) {
 
-  // ── Poblar datos del evaluador en la portada ───────────────────────────────
   setText('exp-nombre-evaluador', usuario.nombre || '—');
   setText('exp-fecha-acceso',     formatearFechaInstitucional(new Date()));
   setText('exp-footer-evaluador', `EVALUADOR: ${usuario.nombre || '—'}`);
   setText('exp-footer-fecha',     formatearFechaLarga());
 
-  // ── Mostrar la pantalla del expediente ────────────────────────────────────
   mostrarPantalla(SCREENS.EXPEDIENTE);
 
-  // ── Cargar evidencias (canciones) desde la base de datos ─────────────────
   try {
     const canciones = await obtenerCanciones();
     renderizarEvidencias(canciones);
   } catch (error) {
-    console.error('[Expediente] Error cargando evidencias:', error);
     const lista = document.getElementById('evidencias-lista');
     if (lista) {
       lista.innerHTML = `
@@ -79,7 +75,6 @@ export async function renderizarExpediente(usuario, idSesion) {
 
 /**
  * Renderiza todas las evidencias en el contenedor #evidencias-lista.
- * Cada canción se convierte en una tarjeta expandible con reproductor.
  *
  * @param {Array} canciones - Array de objetos canción de canciones.json
  */
@@ -87,9 +82,7 @@ function renderizarEvidencias(canciones) {
   const lista    = document.getElementById('evidencias-lista');
   const cargando = document.getElementById('evidencias-cargando');
 
-  // Ocultar indicador de carga
   if (cargando) cargando.style.display = 'none';
-
   if (!lista) return;
 
   if (!canciones || canciones.length === 0) {
@@ -102,7 +95,6 @@ function renderizarEvidencias(canciones) {
     return;
   }
 
-  // Construir tarjeta por cada canción
   canciones.forEach((cancion, indice) => {
     const tarjeta = crearTarjetaEvidencia(cancion, indice + 1);
     lista.appendChild(tarjeta);
@@ -114,24 +106,24 @@ function renderizarEvidencias(canciones) {
  * Crea el elemento DOM de una tarjeta de evidencia expandible.
  *
  * Estructura:
- *   .evidencia
- *     .evidencia__header       (siempre visible, clic para expandir)
- *     .evidencia__contenido    (oculto por defecto, se expande al abrir)
- *       [tabs: Reproductor | Historia | Letra | Créditos]
+ *   article.evidencia
+ *     .evidencia__header        (clic para abrir/cerrar)
+ *     .evidencia__contenido     (oculto por defecto)
+ *       .reproductor            (reproductor de audio / embed)
+ *       .ev-acordeon*N          (Historia / Letra / Créditos — colapsables)
  *
  * @param {Object} cancion - Objeto canción de canciones.json
  * @param {number} numero  - Número de evidencia (1, 2, 3...)
- * @returns {HTMLElement} — Elemento DOM de la evidencia
+ * @returns {HTMLElement}
  */
 function crearTarjetaEvidencia(cancion, numero) {
   const tarjeta = document.createElement('article');
   tarjeta.className = 'evidencia';
   tarjeta.id        = `evidencia-${cancion.id}`;
 
-  // Número de evidencia formateado con ceros
   const numFormato = String(numero).padStart(2, '0');
 
-  // ── Encabezado (siempre visible) ─────────────────────────────────────────
+  // ── Encabezado ─────────────────────────────────────────────────────────────
   const header = document.createElement('div');
   header.className = 'evidencia__header';
   header.setAttribute('role', 'button');
@@ -148,70 +140,55 @@ function crearTarjetaEvidencia(cancion, numero) {
     </button>
   `;
 
-  // ── Contenido expandible ──────────────────────────────────────────────────
+  // ── Contenido expandible ───────────────────────────────────────────────────
   const contenido = document.createElement('div');
   contenido.className = 'evidencia__contenido';
   contenido.setAttribute('role', 'region');
   contenido.setAttribute('aria-label', `Contenido de la evidencia ${numFormato}`);
 
-  // Subtítulo de la evidencia
   if (cancion.subtitulo) {
-    const subtitulo = document.createElement('p');
-    subtitulo.style.cssText = `
-      font-size: var(--texto-xs);
-      letter-spacing: 0.1em;
-      color: var(--color-acento);
-      text-transform: uppercase;
-      margin-bottom: var(--espacio-4);
-    `;
-    subtitulo.textContent = cancion.subtitulo;
-    contenido.appendChild(subtitulo);
+    const sub = document.createElement('p');
+    sub.className   = 'evidencia__subtitulo';
+    sub.textContent = cancion.subtitulo;
+    contenido.appendChild(sub);
   }
 
-  // Pestañas de contenido
-  const tabs       = crearTabs(cancion.id);
-  const panelRepro = crearPanelReproductor(cancion);
-  const panelHist  = crearPanelTexto(cancion.historia, 'Historia de la pieza');
-  const panelLetra = crearPanelLetra(cancion.letra);
-  const panelCred  = crearPanelCreditos(cancion.creditos);
+  // Reproductor de audio (siempre visible al abrir)
+  contenido.appendChild(crearReproductor(cancion));
 
-  contenido.appendChild(tabs.contenedorTabs);
-  contenido.appendChild(panelRepro);
-  contenido.appendChild(panelHist);
-  contenido.appendChild(panelLetra);
-  contenido.appendChild(panelCred);
+  // Secciones de información (colapsables)
+  if (cancion.historia) {
+    contenido.appendChild(crearAcordeon('HISTORIA DE LA PIEZA', cancion.historia, 'texto'));
+  }
+  if (cancion.letra) {
+    contenido.appendChild(crearAcordeon('TRANSCRIPCIÓN DE LETRA', cancion.letra, 'letra'));
+  }
+  if (cancion.creditos) {
+    contenido.appendChild(crearAcordeon('FICHA TÉCNICA Y CRÉDITOS', cancion.creditos, 'creditos'));
+  }
 
-  // ── Eventos de apertura/cierre ────────────────────────────────────────────
+  // ── Toggle abrir/cerrar ────────────────────────────────────────────────────
   const toggleBtn = header.querySelector('.evidencia__toggle');
+
   const abrirCerrar = () => alternarEvidencia(tarjeta, header, toggleBtn);
 
-  header.addEventListener('click', abrirCerrar);
+  // Clic en el botón abre/cierra (sin burbujeo doble)
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    abrirCerrar();
+  });
+
+  // Clic en el resto del header también abre/cierra
+  header.addEventListener('click', (e) => {
+    if (e.target === toggleBtn) return;
+    abrirCerrar();
+  });
 
   header.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       abrirCerrar();
     }
-  });
-
-  // ── Activar primera pestaña por defecto ───────────────────────────────────
-  activarTab(tabs.tabReproductor, panelRepro, [
-    { tab: tabs.tabReproductor, panel: panelRepro },
-    { tab: tabs.tabHistoria,    panel: panelHist  },
-    { tab: tabs.tabLetra,       panel: panelLetra },
-    { tab: tabs.tabCreditos,    panel: panelCred  }
-  ]);
-
-  // ── Registrar listeners de las pestañas ───────────────────────────────────
-  const grupos = [
-    { tab: tabs.tabReproductor, panel: panelRepro },
-    { tab: tabs.tabHistoria,    panel: panelHist  },
-    { tab: tabs.tabLetra,       panel: panelLetra },
-    { tab: tabs.tabCreditos,    panel: panelCred  }
-  ];
-
-  grupos.forEach(({ tab, panel }) => {
-    tab.addEventListener('click', () => activarTab(tab, panel, grupos));
   });
 
   tarjeta.appendChild(header);
@@ -222,11 +199,7 @@ function crearTarjetaEvidencia(cancion, numero) {
 
 
 /**
- * Alterna el estado de apertura/cierre de una evidencia.
- *
- * @param {HTMLElement} tarjeta   - Elemento .evidencia
- * @param {HTMLElement} header    - Encabezado de la tarjeta
- * @param {HTMLElement} toggleBtn - Botón de abrir/cerrar
+ * Alterna apertura/cierre de una evidencia.
  */
 function alternarEvidencia(tarjeta, header, toggleBtn) {
   const estaAbierta = tarjeta.classList.contains('abierta');
@@ -240,7 +213,6 @@ function alternarEvidencia(tarjeta, header, toggleBtn) {
     header.setAttribute('aria-expanded', 'true');
     if (toggleBtn) toggleBtn.textContent = 'CERRAR EVIDENCIA';
 
-    // Desplazar suavemente al inicio de la tarjeta
     setTimeout(() => {
       tarjeta.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
@@ -248,183 +220,54 @@ function alternarEvidencia(tarjeta, header, toggleBtn) {
 }
 
 
-// ── Construcción de pestañas ─────────────────────────────────────────────────
-
 /**
- * Crea el contenedor de pestañas (tabs) para una evidencia.
+ * Crea una sección colapsable (acordeón) dentro de la evidencia.
  *
- * @param {number} cancionId - ID de la canción (para IDs únicos en el DOM)
- * @returns {Object} — Objeto con los elementos de tab y su contenedor
+ * @param {string} titulo    - Título de la sección (ej: "HISTORIA DE LA PIEZA")
+ * @param {string} contenido - Texto del contenido
+ * @param {'texto'|'letra'|'creditos'} tipo - Controla el estilo del texto
+ * @returns {HTMLElement}
  */
-function crearTabs(cancionId) {
-  const contenedorTabs = document.createElement('div');
-  contenedorTabs.className   = 'evidencia-tabs';
-  contenedorTabs.setAttribute('role', 'tablist');
+function crearAcordeon(titulo, contenido, tipo) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'ev-acordeon';
 
-  const tabReproductor = crearTab('REPRODUCTOR', `tab-repro-${cancionId}`);
-  const tabHistoria    = crearTab('HISTORIA',    `tab-hist-${cancionId}`);
-  const tabLetra       = crearTab('LETRA',       `tab-letra-${cancionId}`);
-  const tabCreditos    = crearTab('CRÉDITOS',    `tab-cred-${cancionId}`);
+  // Cabecera del acordeón
+  const cabecera = document.createElement('button');
+  cabecera.type      = 'button';
+  cabecera.className = 'ev-acordeon__cabecera';
+  cabecera.setAttribute('aria-expanded', 'false');
+  cabecera.innerHTML = `
+    <span>${titulo}</span>
+    <span class="ev-acordeon__icono">▶</span>
+  `;
 
-  contenedorTabs.append(tabReproductor, tabHistoria, tabLetra, tabCreditos);
+  // Cuerpo del acordeón
+  const cuerpo = document.createElement('div');
+  cuerpo.className = 'ev-acordeon__cuerpo';
 
-  return { contenedorTabs, tabReproductor, tabHistoria, tabLetra, tabCreditos };
-}
+  const textoEl = tipo === 'letra' || tipo === 'creditos'
+    ? document.createElement('pre')
+    : document.createElement('p');
 
+  textoEl.className   = `ev-acordeon__texto ev-acordeon__texto--${tipo}`;
+  textoEl.textContent = contenido;
+  cuerpo.appendChild(textoEl);
 
-/**
- * Crea un botón de pestaña individual.
- *
- * @param {string} texto - Texto de la pestaña
- * @param {string} id    - ID único del botón
- * @returns {HTMLButtonElement}
- */
-function crearTab(texto, id) {
-  const btn = document.createElement('button');
-  btn.type      = 'button';
-  btn.id        = id;
-  btn.className = 'evidencia-tab';
-  btn.setAttribute('role', 'tab');
-  btn.textContent = texto;
-  return btn;
-}
-
-
-/**
- * Activa una pestaña y oculta las demás.
- *
- * @param {HTMLElement} tabActiva  - Tab a activar
- * @param {HTMLElement} panelActivo - Panel a mostrar
- * @param {Array} todos - Array de {tab, panel} con todos los grupos
- */
-function activarTab(tabActiva, panelActivo, todos) {
-  todos.forEach(({ tab, panel }) => {
-    tab.classList.remove('activo');
-    panel.classList.remove('activo');
-    tab.setAttribute('aria-selected', 'false');
+  // Toggle
+  cabecera.addEventListener('click', () => {
+    const abierto = wrapper.classList.contains('abierto');
+    if (abierto) {
+      wrapper.classList.remove('abierto');
+      cabecera.setAttribute('aria-expanded', 'false');
+    } else {
+      wrapper.classList.add('abierto');
+      cabecera.setAttribute('aria-expanded', 'true');
+    }
   });
 
-  tabActiva.classList.add('activo');
-  panelActivo.classList.add('activo');
-  tabActiva.setAttribute('aria-selected', 'true');
-}
+  wrapper.appendChild(cabecera);
+  wrapper.appendChild(cuerpo);
 
-
-// ── Construcción de paneles de contenido ────────────────────────────────────
-
-/**
- * Crea el panel del reproductor de audio.
- *
- * @param {Object} cancion - Objeto canción
- * @returns {HTMLElement}
- */
-function crearPanelReproductor(cancion) {
-  const panel = document.createElement('div');
-  panel.className   = 'evidencia-panel';
-  panel.setAttribute('role', 'tabpanel');
-
-  panel.appendChild(crearReproductor(cancion));
-  return panel;
-}
-
-
-/**
- * Crea un panel de texto genérico (Historia).
- *
- * @param {string} texto   - Contenido textual
- * @param {string} titulo  - Título de la sección
- * @returns {HTMLElement}
- */
-function crearPanelTexto(texto, titulo) {
-  const panel = document.createElement('div');
-  panel.className = 'evidencia-panel';
-  panel.setAttribute('role', 'tabpanel');
-
-  const seccion = document.createElement('div');
-  seccion.className = 'evidencia-seccion';
-
-  const tituloEl = document.createElement('p');
-  tituloEl.className   = 'evidencia-seccion__titulo';
-  tituloEl.textContent = titulo || 'INFORMACIÓN';
-
-  const textoEl = document.createElement('p');
-  textoEl.className   = 'evidencia-seccion__texto';
-  textoEl.textContent = texto || 'INFORMACIÓN NO DISPONIBLE EN ESTE EXPEDIENTE.';
-
-  seccion.appendChild(tituloEl);
-  seccion.appendChild(textoEl);
-  panel.appendChild(seccion);
-
-  return panel;
-}
-
-
-/**
- * Crea el panel de la letra de la canción.
- * Preserva saltos de línea y usa fuente de documento.
- *
- * @param {string} letra - Letra de la canción
- * @returns {HTMLElement}
- */
-function crearPanelLetra(letra) {
-  const panel = document.createElement('div');
-  panel.className = 'evidencia-panel';
-  panel.setAttribute('role', 'tabpanel');
-
-  const seccion = document.createElement('div');
-  seccion.className = 'evidencia-seccion';
-
-  const tituloEl = document.createElement('p');
-  tituloEl.className   = 'evidencia-seccion__titulo';
-  tituloEl.textContent = 'TRANSCRIPCIÓN DE LETRA';
-
-  const textoEl = document.createElement('pre');
-  textoEl.className   = 'evidencia-seccion__texto';
-  textoEl.style.cssText = `
-    font-family:    var(--fuente-doc);
-    white-space:    pre-wrap;
-    word-wrap:      break-word;
-    line-height:    1.9;
-  `;
-  textoEl.textContent = letra || 'LETRA NO DISPONIBLE EN ESTE EXPEDIENTE.';
-
-  seccion.appendChild(tituloEl);
-  seccion.appendChild(textoEl);
-  panel.appendChild(seccion);
-
-  return panel;
-}
-
-
-/**
- * Crea el panel de créditos de la canción.
- *
- * @param {string} creditos - Texto de créditos
- * @returns {HTMLElement}
- */
-function crearPanelCreditos(creditos) {
-  const panel = document.createElement('div');
-  panel.className = 'evidencia-panel';
-  panel.setAttribute('role', 'tabpanel');
-
-  const seccion = document.createElement('div');
-  seccion.className = 'evidencia-seccion';
-
-  const tituloEl = document.createElement('p');
-  tituloEl.className   = 'evidencia-seccion__titulo';
-  tituloEl.textContent = 'FICHA TÉCNICA Y CRÉDITOS';
-
-  const textoEl = document.createElement('pre');
-  textoEl.className   = 'evidencia-seccion__creditos';
-  textoEl.style.cssText = `
-    white-space: pre-wrap;
-    word-wrap:   break-word;
-  `;
-  textoEl.textContent = creditos || 'CRÉDITOS NO DISPONIBLES EN ESTE EXPEDIENTE.';
-
-  seccion.appendChild(tituloEl);
-  seccion.appendChild(textoEl);
-  panel.appendChild(seccion);
-
-  return panel;
+  return wrapper;
 }

@@ -442,6 +442,96 @@
   letter-spacing:   0.08em;
 }
 
+/* Embed de YouTube */
+.reproductor__youtube {
+  width:            100%;
+  border:           1px solid var(--color-borde-primario);
+  background-color: #000;
+  overflow:         hidden;
+}
+
+/* ── Subtítulo de evidencia ── */
+.evidencia__subtitulo {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.1em;
+  color:          var(--color-acento);
+  text-transform: uppercase;
+  margin-bottom:  var(--espacio-4);
+}
+
+/* ── Acordeón interno de evidencia (Historia / Letra / Créditos) ── */
+.ev-acordeon {
+  border-top: 1px solid var(--color-borde-secundario);
+  margin-top: var(--espacio-4);
+}
+
+.ev-acordeon__cabecera {
+  display:          flex;
+  align-items:      center;
+  justify-content:  space-between;
+  width:            100%;
+  background:       none;
+  border:           none;
+  color:            var(--color-texto-apagado);
+  font-family:      var(--fuente-mono);
+  font-size:        var(--texto-xxs);
+  font-weight:      700;
+  letter-spacing:   0.2em;
+  text-transform:   uppercase;
+  padding:          var(--espacio-3) 0;
+  cursor:           pointer;
+  text-align:       left;
+  transition:       color var(--transicion-rapida);
+}
+
+.ev-acordeon__cabecera:hover {
+  color: var(--color-texto-primario);
+}
+
+.ev-acordeon__icono {
+  font-size:   0.65rem;
+  transition:  transform var(--transicion-rapida);
+  flex-shrink: 0;
+  margin-left: var(--espacio-3);
+}
+
+.ev-acordeon.abierto .ev-acordeon__cabecera {
+  color: var(--color-texto-primario);
+}
+
+.ev-acordeon.abierto .ev-acordeon__icono {
+  transform: rotate(90deg);
+}
+
+.ev-acordeon__cuerpo {
+  display:        none;
+  padding-bottom: var(--espacio-4);
+}
+
+.ev-acordeon.abierto .ev-acordeon__cuerpo {
+  display: block;
+}
+
+.ev-acordeon__texto {
+  font-family:  var(--fuente-doc);
+  font-size:    var(--texto-base);
+  color:        var(--color-texto-primario);
+  line-height:  1.85;
+  margin:       0;
+}
+
+.ev-acordeon__texto--letra,
+.ev-acordeon__texto--creditos {
+  white-space: pre-wrap;
+  word-wrap:   break-word;
+}
+
+.ev-acordeon__texto--creditos {
+  font-size: var(--texto-sm);
+  color:     var(--color-texto-secundario);
+  line-height: 1.7;
+}
+
 /* ── Secciones del contenido de evidencia ── */
 .evidencia-seccion {
   margin-top:    var(--espacio-5);
