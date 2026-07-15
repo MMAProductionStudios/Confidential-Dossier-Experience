@@ -128,7 +128,7 @@ function mapearUsuario(row: Record<string, string>) {
     fotografia:          row["Foto"]              || "",
     activo:              (row["Estado"] || "").toLowerCase() !== "inactivo",
     bio:                 row["Notas"]             || "",
-    mensajePersonalizado: row["Notas"]            || "",
+    mensajePersonalizado: row["Mensaje personalizado"] || row["Notas"] || "",
     evaluacionRealizada: (row["Evaluación"] || "").toLowerCase() === "sí",
     ultimoAcceso:        row["Último acceso"]     || null,
   };
