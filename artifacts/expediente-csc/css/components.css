@@ -253,6 +253,37 @@
   justify-content: center;
 }
 
+/* Mensaje de ayuda debajo del error de autenticación */
+.auth-ayuda {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.05em;
+  color:          var(--color-texto-apagado);
+  text-align:     center;
+  margin-top:     var(--espacio-4);
+  line-height:    1.6;
+}
+
+.auth-ayuda__enlace {
+  color:           var(--color-acento);
+  text-decoration: none;
+  border-bottom:   1px solid transparent;
+  transition:      border-color var(--transicion-rapida);
+}
+
+.auth-ayuda__enlace:hover {
+  border-bottom-color: var(--color-acento);
+}
+
+/* Número de pregunta en el formulario de evaluación */
+.eval-pregunta__num {
+  display:        block;
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.25em;
+  color:          var(--color-acento);
+  margin-bottom:  var(--espacio-1);
+  font-weight:    700;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /* SELECTOR DE CALIFICACIÓN                                                    */
 /* ═══════════════════════════════════════════════════════════════════════════ */

@@ -135,13 +135,14 @@ async function manejarEnvioEvaluacion(e) {
   limpiarMensaje('eval-exito');
 
   // Recoger datos del formulario
-  const observaciones   = document.getElementById('eval-observaciones')?.value.trim()  || '';
-  const fortalezas      = document.getElementById('eval-fortalezas')?.value.trim()     || '';
-  const mejoras         = document.getElementById('eval-mejoras')?.value.trim()        || '';
-  const comentarioFinal = document.getElementById('eval-comentario')?.value.trim()     || '';
+  const pregunta1 = document.getElementById('eval-p1')?.value.trim() || '';
+  const pregunta2 = document.getElementById('eval-p2')?.value.trim() || '';
+  const pregunta3 = document.getElementById('eval-p3')?.value.trim() || '';
+  const pregunta4 = document.getElementById('eval-p4')?.value.trim() || '';
+  const pregunta5 = document.getElementById('eval-p5')?.value.trim() || '';
 
-  // Validar campos requeridos
-  const esValido = validarFormularioEvaluacion(calificacionSeleccionada, observaciones, comentarioFinal);
+  // Validar campos requeridos (pregunta 1, pregunta 5 y calificación)
+  const esValido = validarFormularioEvaluacion(calificacionSeleccionada, pregunta1, pregunta5);
   if (!esValido) return;
 
   // Obtener usuario de la sesión actual
@@ -149,13 +150,14 @@ async function manejarEnvioEvaluacion(e) {
 
   // Construir objeto de evaluación
   const evaluacion = {
-    usuarioId:      usuario?.id        || null,
-    expediente:     'CSC-2026-MB',
-    calificacion:   calificacionSeleccionada,
-    observaciones,
-    fortalezas,
-    mejoras,
-    comentarioFinal
+    usuarioId:   usuario?.id || null,
+    expediente:  'CSC-2026-MB',
+    calificacion: calificacionSeleccionada,
+    pregunta1,
+    pregunta2,
+    pregunta3,
+    pregunta4,
+    pregunta5
   };
 
   // Deshabilitar botón durante el proceso
@@ -214,19 +216,19 @@ async function manejarEnvioEvaluacion(e) {
  * @param {string} comentarioFinal - Texto del comentario final
  * @returns {boolean} — true si todos los campos requeridos son válidos
  */
-function validarFormularioEvaluacion(calificacion, observaciones, comentarioFinal) {
+function validarFormularioEvaluacion(calificacion, pregunta1, pregunta5) {
   const errores = [];
 
   if (!calificacion || calificacion < 1 || calificacion > 10) {
     errores.push('CALIFICACIÓN REQUERIDA: SELECCIONE UNA PUNTUACIÓN DEL 1 AL 10.');
   }
 
-  if (!observaciones || observaciones.length < 10) {
-    errores.push('OBSERVACIONES GENERALES REQUERIDAS: MÍNIMO 10 CARACTERES.');
+  if (!pregunta1 || pregunta1.length < 5) {
+    errores.push('PREGUNTA 01 REQUERIDA: INDIQUE CUÁL CANCIÓN CONSIDERA MÁS REPRESENTATIVA.');
   }
 
-  if (!comentarioFinal || comentarioFinal.length < 10) {
-    errores.push('COMENTARIO FINAL REQUERIDO: MÍNIMO 10 CARACTERES.');
+  if (!pregunta5 || pregunta5.length < 5) {
+    errores.push('PREGUNTA 05 REQUERIDA: REGISTRE SU CONCLUSIÓN FINAL.');
   }
 
   if (errores.length > 0) {

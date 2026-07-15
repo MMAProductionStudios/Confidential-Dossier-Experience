@@ -6,6 +6,16 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>EXPEDIENTE CSC-2026-MB — CENTRO DE DOCUMENTACIÓN</title>
 
+  <!-- ─── Google Analytics ────────────────────────────────────────────── -->
+  <!-- Reemplaza G-XXXXXXXXXX con tu Measurement ID de Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
   <!-- ─── Tipografías institucionales ─────────────────────────────────── -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -179,6 +189,12 @@
         </div>
 
         <div id="auth-error-global" class="error-global" hidden></div>
+
+        <p class="auth-ayuda">
+          Si tienes problemas para accesar tu usuario, envía un mensaje a
+          <a href="https://wa.me/524921613029" target="_blank" rel="noopener" class="auth-ayuda__enlace">+52 492 161 3029</a>
+          y con gusto te ayudamos.
+        </p>
 
         <div id="auth-procesando" class="procesando" hidden>
           <span class="procesando__dot"></span>
@@ -466,6 +482,7 @@
 
         <form id="form-evaluacion" class="form-evaluacion" novalidate>
 
+          <!-- Calificación general -->
           <div class="form-campo">
             <label class="form-campo__etiqueta">
               CALIFICACIÓN GENERAL <span class="form-campo__requerido">*</span>
@@ -476,55 +493,80 @@
             </div>
           </div>
 
+          <!-- Pregunta 1 -->
           <div class="form-campo">
-            <label class="form-campo__etiqueta" for="eval-observaciones">
-              OBSERVACIONES GENERALES <span class="form-campo__requerido">*</span>
+            <label class="form-campo__etiqueta" for="eval-p1">
+              <span class="eval-pregunta__num">01 /</span>
+              El álbum aborda temas como la política, la religión, la calle y las contradicciones de hoy. De las 12 canciones, ¿cuál o cuáles considera que logran exponer estos temas con mayor fuerza?
+              <span class="form-campo__requerido">*</span>
             </label>
             <textarea
-              id="eval-observaciones"
-              name="observaciones"
+              id="eval-p1"
+              name="pregunta1"
               class="form-campo__textarea"
-              placeholder="REGISTRE SUS OBSERVACIONES GENERALES SOBRE EL EXPEDIENTE..."
+              placeholder="Escriba su respuesta aquí..."
               rows="4"
             ></textarea>
           </div>
 
+          <!-- Pregunta 2 -->
           <div class="form-campo">
-            <label class="form-campo__etiqueta" for="eval-fortalezas">
-              FORTALEZAS IDENTIFICADAS
+            <label class="form-campo__etiqueta" for="eval-p2">
+              <span class="eval-pregunta__num">02 /</span>
+              ¿Cómo evalúa el ritmo, el estilo de interpretación (flow/síncopa de la voz) y el acople de las voces con la música a lo largo del disco?
             </label>
             <textarea
-              id="eval-fortalezas"
-              name="fortalezas"
+              id="eval-p2"
+              name="pregunta2"
               class="form-campo__textarea"
-              placeholder="REGISTRE LOS ASPECTOS POSITIVOS Y PUNTOS FUERTES DETECTADOS..."
+              placeholder="Escriba su respuesta aquí..."
               rows="4"
             ></textarea>
           </div>
 
+          <!-- Pregunta 3 -->
           <div class="form-campo">
-            <label class="form-campo__etiqueta" for="eval-mejoras">
-              ASPECTOS A MEJORAR
+            <label class="form-campo__etiqueta" for="eval-p3">
+              <span class="eval-pregunta__num">03 /</span>
+              En este proyecto se fusionan el rap con estilos como la salsa, el tamborazo zacatecano y la ópera. ¿Qué impacto considera que tiene esta mezcla de sonidos en las canciones?
             </label>
             <textarea
-              id="eval-mejoras"
-              name="mejoras"
+              id="eval-p3"
+              name="pregunta3"
               class="form-campo__textarea"
-              placeholder="REGISTRE LOS ASPECTOS QUE REQUIEREN ATENCIÓN O MEJORA..."
+              placeholder="Escriba su respuesta aquí..."
               rows="4"
             ></textarea>
           </div>
 
+          <!-- Pregunta 4 -->
           <div class="form-campo">
-            <label class="form-campo__etiqueta" for="eval-comentario">
-              COMENTARIO FINAL <span class="form-campo__requerido">*</span>
+            <label class="form-campo__etiqueta" for="eval-p4">
+              <span class="eval-pregunta__num">04 /</span>
+              Además de la crítica social, el disco tiene momentos muy personales. ¿Qué canción o momento específico sintió más honesto o conectó mejor con usted?
             </label>
             <textarea
-              id="eval-comentario"
-              name="comentarioFinal"
+              id="eval-p4"
+              name="pregunta4"
               class="form-campo__textarea"
-              placeholder="EMITA SU DICTAMEN FINAL SOBRE EL EXPEDIENTE..."
-              rows="5"
+              placeholder="Escriba su respuesta aquí..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <!-- Pregunta 5 -->
+          <div class="form-campo">
+            <label class="form-campo__etiqueta" for="eval-p5">
+              <span class="eval-pregunta__num">05 /</span>
+              Para cerrar: Si tuviera que definir el impacto general de esta obra en una sola frase o comentario, ¿cuál sería su conclusión?
+              <span class="form-campo__requerido">*</span>
+            </label>
+            <textarea
+              id="eval-p5"
+              name="pregunta5"
+              class="form-campo__textarea"
+              placeholder="Escriba su conclusión aquí..."
+              rows="4"
             ></textarea>
           </div>
 
