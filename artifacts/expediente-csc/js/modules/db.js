@@ -3,78 +3,89 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * CAPA DE ABSTRACCIÓN DE DATOS — EXPEDIENTE CSC-2026-MB
  *
- * Este módulo simula una capa de acceso a datos utilizando archivos JSON locales.
- * La arquitectura está diseñada para facilitar la migración posterior a
- * Supabase, Firebase, o cualquier backend REST/GraphQL.
+ * FUENTE ACTIVA: Google Sheets (vía api-server proxy)
+ * FALLBACK:      archivos JSON locales (data/usuarios.json, data/canciones.json)
  *
- * PARA MIGRAR A SUPABASE:
- *   1. Reemplazar fetchJSON() por llamadas a supabase.from('tabla').select()
- *   2. Reemplazar buscarUsuario() por consultas con filtros de Supabase
- *   3. Reemplazar registrarEvaluacion() por INSERT con supabase.from('evaluaciones').insert()
- *   4. El resto de la aplicación no necesita modificarse.
- *
- * PARA MIGRAR A FIREBASE:
- *   1. Reemplazar fetchJSON() por consultas a Firestore
- *   2. Usar collection() y where() para filtrar registros
- *   3. El contrato de datos (objetos retornados) debe mantenerse igual.
+ * El frontend llama al api-server en /api/sheets/*, que a su vez consulta
+ * Google Sheets usando credenciales de cuenta de servicio (nunca expuestas
+ * al navegador). Si el api-server no está configurado o falla, se usa el
+ * JSON local como respaldo.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
 import { safeStorage } from './ui.js';
 
-// ── Configuración de rutas de los archivos de datos ─────────────────────────
-// Al migrar a Supabase/Firebase, estas constantes dejarían de usarse.
+// ── Endpoints del api-server proxy ───────────────────────────────────────────
+const API_BASE       = '/api/sheets';
+const API_USUARIOS   = `${API_BASE}/usuarios`;
+const API_CANCIONES  = `${API_BASE}/canciones`;
+const API_STATUS     = `${API_BASE}/status`;
+
+// ── Rutas locales de fallback ─────────────────────────────────────────────────
 const RUTA_USUARIOS  = './data/usuarios.json';
 const RUTA_CANCIONES = './data/canciones.json';
 
+// ── Cache en memoria de la sesión ─────────────────────────────────────────────
+let _usuariosCache  = null;
+let _cancionesCache = null;
+
+
+// ── Helpers internos ──────────────────────────────────────────────────────────
 
 /**
- * Recupera un archivo JSON desde una ruta relativa.
- * Esta función actúa como la "conexión a la base de datos".
+ * Obtiene datos del api-server. Si falla, intenta fallback a JSON local.
  *
- * @param {string} ruta - Ruta relativa al archivo JSON
- * @returns {Promise<Array|Object>} — Datos parseados del archivo JSON
- * @throws {Error} si el archivo no existe o no es JSON válido
+ * @param {string} apiUrl    - URL del endpoint del api-server
+ * @param {string} localRuta - Ruta del archivo JSON local de respaldo
+ * @returns {Promise<Array>}
  */
-async function fetchJSON(ruta) {
-  const respuesta = await fetch(ruta);
-
-  if (!respuesta.ok) {
-    throw new Error(`No se pudo cargar: ${ruta} (HTTP ${respuesta.status})`);
+async function fetchConFallback(apiUrl, localRuta) {
+  // Intentar primero el api-server (Google Sheets)
+  try {
+    const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(8000) });
+    if (resp.ok) {
+      const json = await resp.json();
+      if (json.ok && Array.isArray(json.data)) {
+        return json.data;
+      }
+    }
+  } catch (_) {
+    // Silenciar — se cae al fallback
   }
 
-  return respuesta.json();
+  // Fallback: JSON local
+  const resp = await fetch(localRuta);
+  if (!resp.ok) throw new Error(`No se pudo cargar: ${localRuta} (HTTP ${resp.status})`);
+  return resp.json();
 }
 
 
-/**
- * Busca un usuario en la base de datos por número de expediente y código.
- *
- * Equivalente Supabase:
- *   const { data } = await supabase
- *     .from('usuarios')
- *     .select('*')
- *     .eq('numeroExpediente', numeroExpediente)
- *     .eq('codigo', codigo)
- *     .eq('activo', true)
- *     .single();
- *
- * @param {string} numeroExpediente - Número de expediente (ej: "CSC-2026-MB-001")
- * @param {string} codigo - Código de autorización (ej: "JLG26001")
- * @returns {Promise<Object|null>} — Registro del usuario o null si no encontrado
- */
-export async function buscarUsuario(numeroExpediente, codigo) {
-  const usuarios = await fetchJSON(RUTA_USUARIOS);
+// ── API pública ───────────────────────────────────────────────────────────────
 
-  // Normalizar para comparación: eliminar espacios, convertir a mayúsculas
-  const expNorm    = numeroExpediente.trim().toUpperCase();
+/**
+ * Busca un usuario por nombre completo (usuario) y código (contraseña).
+ * El nombre se usa como identificador de login según la configuración elegida.
+ *
+ * @param {string} nombreOExpediente - Nombre completo o número de expediente
+ * @param {string} codigo            - Código de acceso
+ * @returns {Promise<Object|null>}
+ */
+export async function buscarUsuario(nombreOExpediente, codigo) {
+  if (!_usuariosCache) {
+    _usuariosCache = await fetchConFallback(API_USUARIOS, RUTA_USUARIOS);
+  }
+
+  const termino    = nombreOExpediente.trim().toUpperCase();
   const codigoNorm = codigo.trim().toUpperCase();
 
-  const encontrado = usuarios.find(u =>
-    u.numeroExpediente.toUpperCase() === expNorm &&
-    u.codigo.toUpperCase()           === codigoNorm &&
-    u.activo === true
-  );
+  const encontrado = _usuariosCache.find(u => {
+    const matchNombre     = (u.nombre             || '').toUpperCase() === termino;
+    const matchExpediente = (u.numeroExpediente    || '').toUpperCase() === termino;
+    const matchCodigo     = (u.codigo              || '').toUpperCase() === codigoNorm;
+    const activo          = u.activo !== false;
+
+    return (matchNombre || matchExpediente) && matchCodigo && activo;
+  });
 
   return encontrado || null;
 }
@@ -83,71 +94,67 @@ export async function buscarUsuario(numeroExpediente, codigo) {
 /**
  * Obtiene todas las canciones (evidencias) del expediente.
  *
- * Equivalente Supabase:
- *   const { data } = await supabase
- *     .from('canciones')
- *     .select('*')
- *     .order('id');
- *
- * @returns {Promise<Array>} — Array de objetos canción
+ * @returns {Promise<Array>}
  */
 export async function obtenerCanciones() {
-  return fetchJSON(RUTA_CANCIONES);
+  if (!_cancionesCache) {
+    _cancionesCache = await fetchConFallback(API_CANCIONES, RUTA_CANCIONES);
+  }
+  return _cancionesCache;
 }
 
 
 /**
  * Obtiene una canción específica por su ID.
  *
- * @param {number} id - ID de la canción
- * @returns {Promise<Object|null>} — Objeto canción o null
+ * @param {number} id
+ * @returns {Promise<Object|null>}
  */
 export async function obtenerCancionPorId(id) {
-  const canciones = await fetchJSON(RUTA_CANCIONES);
-  return canciones.find(c => c.id === id) || null;
+  const canciones = await obtenerCanciones();
+  return canciones.find(c => Number(c.id) === Number(id)) || null;
+}
+
+
+/**
+ * Invalida la cache en memoria (útil si los datos cambian durante la sesión).
+ */
+export function invalidarCache() {
+  _usuariosCache  = null;
+  _cancionesCache = null;
+}
+
+
+/**
+ * Verifica si el api-server está configurado con Google Sheets.
+ * Útil para mostrar indicadores de estado en el admin.
+ *
+ * @returns {Promise<{ok: boolean, configurado: Object}>}
+ */
+export async function verificarConexionSheets() {
+  try {
+    const resp = await fetch(API_STATUS, { signal: AbortSignal.timeout(4000) });
+    if (resp.ok) return resp.json();
+  } catch (_) {}
+  return { ok: false, configurado: { GOOGLE_SHEETS_ID: false, GOOGLE_SERVICE_ACCOUNT: false } };
 }
 
 
 /**
  * Registra la evaluación del usuario.
+ * En esta versión se guarda localmente; al conectar backend se hará INSERT real.
  *
- * NOTA: En esta versión de simulación JSON, el registro se almacena únicamente
- * en sessionStorage. Al migrar a Supabase, este método hará un INSERT real.
- *
- * Equivalente Supabase:
- *   const { data, error } = await supabase
- *     .from('evaluaciones')
- *     .insert({
- *       usuario_id:      evaluacion.usuarioId,
- *       calificacion:    evaluacion.calificacion,
- *       observaciones:   evaluacion.observaciones,
- *       fortalezas:      evaluacion.fortalezas,
- *       mejoras:         evaluacion.mejoras,
- *       comentarioFinal: evaluacion.comentarioFinal,
- *       fecha:           new Date().toISOString()
- *     });
- *
- * @param {Object} evaluacion - Objeto con los datos de la evaluación
- * @param {number} evaluacion.usuarioId       - ID del evaluador
- * @param {number} evaluacion.calificacion    - Puntuación del 1 al 10
- * @param {string} evaluacion.observaciones   - Observaciones generales
- * @param {string} evaluacion.fortalezas      - Fortalezas identificadas
- * @param {string} evaluacion.mejoras         - Aspectos a mejorar
- * @param {string} evaluacion.comentarioFinal - Dictamen final
+ * @param {Object} evaluacion
  * @returns {Promise<{exito: boolean, mensaje: string}>}
  */
 export async function registrarEvaluacion(evaluacion) {
-  // Simulación: guardar en sessionStorage hasta conectar backend real
   const registro = {
     ...evaluacion,
-    fecha:     new Date().toISOString(),
+    fecha:      new Date().toISOString(),
     expediente: 'CSC-2026-MB'
   };
 
-  // Persistir en almacenamiento seguro
   safeStorage.setItem('evaluacion_registrada', JSON.stringify(registro));
-
-  // Simular latencia de red para efecto institucional realista
   await new Promise(resolve => setTimeout(resolve, 1200));
 
   return {
@@ -158,22 +165,13 @@ export async function registrarEvaluacion(evaluacion) {
 
 
 /**
- * Actualiza el campo ultimoAcceso del usuario en sessionStorage.
- * Al migrar a Supabase, hará un UPDATE real en la base de datos.
+ * Registra el último acceso del usuario.
  *
- * Equivalente Supabase:
- *   await supabase
- *     .from('usuarios')
- *     .update({ ultimoAcceso: new Date().toISOString() })
- *     .eq('id', usuarioId);
- *
- * @param {number} usuarioId - ID del usuario a actualizar
+ * @param {number} usuarioId
  */
 export async function registrarAcceso(usuarioId) {
-  // En modo JSON simulado: solo registrar en sessionStorage
-  const acceso = {
+  safeStorage.setItem('ultimo_acceso', JSON.stringify({
     usuarioId,
     fecha: new Date().toISOString()
-  };
-  safeStorage.setItem('ultimo_acceso', JSON.stringify(acceso));
+  }));
 }
