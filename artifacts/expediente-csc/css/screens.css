@@ -860,3 +860,223 @@
 .form-evaluacion {
   max-width: 680px;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* PANTALLA 6 — AGRADECIMIENTO / DESCLASIFICACIÓN                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.screen-gracias {
+  justify-content:  center;
+  align-items:      center;
+  background-color: var(--color-fondo-base);
+  overflow-y:       auto;
+  padding:          var(--espacio-8) var(--espacio-6);
+}
+
+.gracias-contenedor {
+  position:   relative;
+  max-width:  720px;
+  width:      100%;
+  margin:     0 auto;
+  display:    flex;
+  flex-direction: column;
+  gap:        var(--espacio-10);
+}
+
+/* ── Sello estampado ──────────────────────────────────────────────────────── */
+
+.gracias-sello-wrap {
+  display:         flex;
+  justify-content: center;
+}
+
+.gracias-sello {
+  display:          flex;
+  flex-direction:   column;
+  align-items:      center;
+  justify-content:  center;
+  width:            160px;
+  height:           160px;
+  border-radius:    50%;
+  border:           4px solid var(--color-acento);
+  opacity:          0.18;
+  padding:          var(--espacio-4);
+  animation:        sello-aparecer 1.2s ease forwards;
+}
+
+@keyframes sello-aparecer {
+  from { opacity: 0; transform: scale(1.3) rotate(-8deg); }
+  to   { opacity: 0.18; transform: scale(1) rotate(-8deg); }
+}
+
+.gracias-sello__linea1,
+.gracias-sello__linea2,
+.gracias-sello__linea3 {
+  font-family:    var(--fuente-mono);
+  font-weight:    700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color:          var(--color-acento);
+  line-height:    1.2;
+}
+
+.gracias-sello__linea1 { font-size: var(--texto-xs); }
+.gracias-sello__linea2 { font-size: var(--texto-2xl); }
+.gracias-sello__linea3 { font-size: var(--texto-xs); }
+
+/* ── Encabezado ───────────────────────────────────────────────────────────── */
+
+.gracias-header {
+  text-align: center;
+}
+
+.gracias-header__clasificacion {
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.2em;
+  color:          var(--color-texto-apagado);
+  margin-bottom:  var(--espacio-3);
+}
+
+.gracias-header__titulo {
+  font-family:    var(--fuente-mono);
+  font-size:      clamp(1.4rem, 4vw, 2.2rem);
+  font-weight:    700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color:          var(--color-texto-primario);
+  margin-bottom:  var(--espacio-4);
+}
+
+.gracias-header__linea {
+  height:           1px;
+  background-color: var(--color-acento);
+  opacity:          0.4;
+  max-width:        300px;
+  margin:           0 auto;
+}
+
+/* ── Cuerpo del mensaje ───────────────────────────────────────────────────── */
+
+.gracias-mensaje {
+  display:    flex;
+  flex-direction: column;
+  gap:        var(--espacio-5);
+}
+
+.gracias-mensaje__parrafo {
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-sm);
+  line-height:    1.8;
+  color:          var(--color-texto-secundario);
+  letter-spacing: 0.04em;
+}
+
+.gracias-mensaje__parrafo em {
+  font-style: italic;
+  color:      var(--color-texto-primario);
+}
+
+/* ── CTA de difusión ─────────────────────────────────────────────────────── */
+
+.gracias-cta {
+  display:          flex;
+  flex-direction:   column;
+  align-items:      center;
+  gap:              var(--espacio-5);
+  border-top:       1px solid var(--color-borde-primario);
+  border-bottom:    1px solid var(--color-borde-primario);
+  padding:          var(--espacio-8) var(--espacio-4);
+}
+
+.gracias-cta__pregunta {
+  font-family:    var(--fuente-mono);
+  font-size:      clamp(1rem, 2.5vw, 1.25rem);
+  font-weight:    600;
+  letter-spacing: 0.08em;
+  color:          var(--color-texto-primario);
+  text-align:     center;
+  line-height:    1.5;
+}
+
+.gracias-cta__instruccion {
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.06em;
+  color:          var(--color-texto-apagado);
+  text-align:     center;
+  max-width:      560px;
+  line-height:    1.8;
+}
+
+.gracias-cta__boton {
+  display:          inline-flex;
+  align-items:      center;
+  gap:              var(--espacio-3);
+  padding:          var(--espacio-4) var(--espacio-8);
+  background-color: var(--color-acento);
+  color:            var(--color-fondo-base);
+  font-family:      var(--fuente-mono);
+  font-size:        var(--texto-sm);
+  font-weight:      700;
+  letter-spacing:   0.2em;
+  text-transform:   uppercase;
+  text-decoration:  none;
+  border:           none;
+  cursor:           pointer;
+  transition:       background-color var(--transicion-rapida),
+                    transform        var(--transicion-rapida);
+}
+
+.gracias-cta__boton:hover {
+  background-color: var(--color-texto-primario);
+  transform:        translateY(-2px);
+}
+
+.gracias-cta__boton-icono {
+  font-size: 1.1em;
+}
+
+.gracias-cta__subtext {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.1em;
+  color:          var(--color-texto-apagado);
+  text-align:     center;
+  font-style:     italic;
+}
+
+/* ── Pie de página ────────────────────────────────────────────────────────── */
+
+.gracias-footer {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--espacio-4);
+  text-align:     center;
+}
+
+.gracias-footer__linea {
+  width:            80px;
+  height:           1px;
+  background-color: var(--color-borde-primario);
+}
+
+.gracias-footer__texto {
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-sm);
+  letter-spacing: 0.06em;
+  color:          var(--color-texto-secundario);
+  line-height:    1.8;
+}
+
+.gracias-footer__texto strong {
+  color:       var(--color-texto-primario);
+  font-weight: 600;
+}
+
+.gracias-footer__codigo {
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-apagado);
+  text-transform: uppercase;
+}

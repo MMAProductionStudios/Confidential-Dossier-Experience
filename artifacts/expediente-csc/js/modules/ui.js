@@ -36,7 +36,8 @@ const PANTALLAS = {
   INICIO:      'screen-inicio',
   AUTH:        'screen-auth',
   CREDENCIAL:  'screen-credencial',
-  EXPEDIENTE:  'screen-expediente'
+  EXPEDIENTE:  'screen-expediente',
+  GRACIAS:     'screen-gracias'
 };
 
 // Pantalla actualmente visible

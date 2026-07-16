@@ -14,6 +14,8 @@
 import { registrarEvaluacion } from './db.js';
 import { getUsuarioSesion } from './auth.js';
 import {
+  mostrarPantalla,
+  SCREENS,
   mostrarError,
   limpiarMensaje,
   setVisible,
@@ -170,19 +172,17 @@ async function manejarEnvioEvaluacion(e) {
     if (resultado.exito) {
       evaluacionEnviada = true;
 
-      // Mostrar mensaje de éxito
-      const mensajeExito = `EVALUACIÓN REGISTRADA EXITOSAMENTE.\n${resultado.mensaje}`;
-      const exitoEl = document.getElementById('eval-exito');
-      if (exitoEl) {
-        exitoEl.textContent = mensajeExito;
-        exitoEl.removeAttribute('hidden');
-      }
-
       // Actualizar estado del formulario
       actualizarEstadoFormulario('COMPLETADO');
 
       // Deshabilitar el formulario para evitar modificaciones
       deshabilitarFormulario();
+
+      // Navegar a la pantalla de agradecimiento tras un breve destello de confirmación
+      setTimeout(() => {
+        mostrarPantalla(SCREENS.GRACIAS);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 800);
 
     } else {
       mostrarError('eval-error',
