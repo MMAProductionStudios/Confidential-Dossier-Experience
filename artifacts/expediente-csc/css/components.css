@@ -723,3 +723,361 @@
   font-weight: 600;
   letter-spacing: 0.1em;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* REPRODUCTOR CUSTOM — PLAYER HTML5 PERSONALIZADO                            */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.rep-player {
+  background-color: var(--color-fondo-input);
+  border:           1px solid var(--color-borde-primario);
+  padding:          var(--espacio-4);
+  margin-bottom:    var(--espacio-4);
+}
+
+/* ── Fila de controles ── */
+.rep-controls {
+  display:     flex;
+  align-items: center;
+  gap:         var(--espacio-3);
+  margin-bottom: var(--espacio-3);
+}
+
+.rep-btn-play {
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  width:            38px;
+  height:           38px;
+  flex-shrink:      0;
+  background-color: var(--color-acento);
+  color:            var(--color-fondo-base);
+  border:           none;
+  font-size:        1rem;
+  cursor:           pointer;
+  transition:       background-color var(--transicion-rapida),
+                    transform        var(--transicion-rapida);
+  font-family:      var(--fuente-mono);
+}
+
+.rep-btn-play:hover {
+  background-color: var(--color-texto-primario);
+  transform:        scale(1.05);
+}
+
+.rep-time {
+  flex:           1;
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.12em;
+  color:          var(--color-texto-apagado);
+  user-select:    none;
+}
+
+/* ── Botón de reacción ♡ ── */
+.rep-btn-reaction {
+  background:     none;
+  border:         1px solid var(--color-borde-primario);
+  color:          var(--color-texto-apagado);
+  font-size:      1.1rem;
+  width:          34px;
+  height:         34px;
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
+  cursor:         pointer;
+  transition:     all var(--transicion-rapida);
+  flex-shrink:    0;
+}
+
+.rep-btn-reaction:hover {
+  border-color: #e05;
+  color:        #e05;
+}
+
+.rep-btn-reaction.reaccionado {
+  border-color: #e05;
+  color:        #e05;
+  animation:    latido 0.4s ease;
+}
+
+@keyframes latido {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.5); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+/* ── Barra de progreso (SoundCloud style) ── */
+.rep-progress-wrap {
+  position: relative;
+}
+
+.rep-progress-bar {
+  position:         relative;
+  height:           6px;
+  background-color: var(--color-borde-primario);
+  cursor:           pointer;
+  border-radius:    0;
+  transition:       height var(--transicion-rapida);
+}
+
+.rep-progress-bar:hover {
+  height: 8px;
+}
+
+.rep-progress-fill {
+  position:         absolute;
+  top:              0;
+  left:             0;
+  height:           100%;
+  width:            0%;
+  background-color: var(--color-acento);
+  pointer-events:   none;
+  transition:       width 0.1s linear;
+}
+
+.rep-progress-thumb {
+  position:         absolute;
+  top:              50%;
+  left:             0%;
+  transform:        translate(-50%, -50%);
+  width:            12px;
+  height:           12px;
+  background-color: var(--color-acento);
+  border-radius:    50%;
+  pointer-events:   none;
+  opacity:          0;
+  transition:       opacity var(--transicion-rapida);
+}
+
+.rep-progress-bar:hover .rep-progress-thumb {
+  opacity: 1;
+}
+
+/* ── Nota de producción (aparece sobre la barra) ── */
+.rep-nota-overlay {
+  position:         absolute;
+  bottom:           calc(100% + 6px);
+  left:             0;
+  right:            0;
+  background-color: var(--color-fondo-panel);
+  border:           1px solid var(--color-acento);
+  color:            var(--color-acento);
+  font-family:      var(--fuente-mono);
+  font-size:        var(--texto-xxs);
+  letter-spacing:   0.08em;
+  padding:          var(--espacio-2) var(--espacio-3);
+  animation:        nota-entrada 0.25s ease;
+  z-index:          2;
+  line-height:      1.5;
+}
+
+.rep-nota-overlay::before {
+  content:  '◈ NOTA DE PRODUCCIÓN: ';
+  color:    var(--color-texto-apagado);
+}
+
+@keyframes nota-entrada {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Calificación por canción (1–10) ── */
+.rep-rating {
+  display:     flex;
+  align-items: center;
+  gap:         var(--espacio-3);
+  margin-top:  var(--espacio-4);
+  flex-wrap:   wrap;
+}
+
+.rep-rating__label {
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-xxs);
+  letter-spacing: 0.15em;
+  color:          var(--color-texto-apagado);
+  white-space:    nowrap;
+}
+
+.rep-rating__nums {
+  display:  flex;
+  gap:      var(--espacio-1);
+  flex-wrap: wrap;
+}
+
+.rep-rating__num {
+  width:            28px;
+  height:           28px;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  border:           1px solid var(--color-borde-primario);
+  background-color: transparent;
+  font-family:      var(--fuente-mono);
+  font-size:        var(--texto-xs);
+  font-weight:      600;
+  color:            var(--color-texto-apagado);
+  cursor:           pointer;
+  transition:       all var(--transicion-rapida);
+  letter-spacing:   0;
+}
+
+.rep-rating__num:hover {
+  border-color:     var(--color-acento);
+  color:            var(--color-acento);
+}
+
+.rep-rating__num.seleccionado {
+  background-color: var(--color-operativo);
+  border-color:     var(--color-operativo-texto);
+  color:            var(--color-texto-primario);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* PANEL DE TABS — HISTORIA / LÍRICAS / FICHA TÉCNICA                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.rep-tabs {
+  border-top:  1px solid var(--color-borde-secundario);
+  margin-top:  var(--espacio-4);
+}
+
+.rep-tabs__toggle {
+  display:          flex;
+  align-items:      center;
+  gap:              var(--espacio-2);
+  width:            100%;
+  background:       none;
+  border:           none;
+  color:            var(--color-texto-apagado);
+  font-family:      var(--fuente-mono);
+  font-size:        var(--texto-xxs);
+  font-weight:      700;
+  letter-spacing:   0.2em;
+  text-transform:   uppercase;
+  padding:          var(--espacio-3) 0;
+  cursor:           pointer;
+  text-align:       left;
+  transition:       color var(--transicion-rapida);
+}
+
+.rep-tabs__toggle:hover {
+  color: var(--color-texto-primario);
+}
+
+.rep-tabs__icono {
+  font-size:   0.7em;
+  flex-shrink: 0;
+}
+
+.rep-tabs__body {
+  padding-bottom: var(--espacio-4);
+}
+
+/* ── Nav de tabs ── */
+.rep-tabs__nav {
+  display:       flex;
+  gap:           0;
+  margin-bottom: var(--espacio-4);
+  border-bottom: 1px solid var(--color-borde-primario);
+}
+
+.rep-tabs__tab {
+  background:     none;
+  border:         none;
+  border-bottom:  2px solid transparent;
+  padding:        var(--espacio-2) var(--espacio-4);
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-xxs);
+  font-weight:    600;
+  letter-spacing: 0.18em;
+  color:          var(--color-texto-apagado);
+  cursor:         pointer;
+  text-transform: uppercase;
+  transition:     all var(--transicion-rapida);
+  margin-bottom:  -1px;
+}
+
+.rep-tabs__tab:hover {
+  color:        var(--color-texto-secundario);
+  border-color: var(--color-borde-marcado);
+}
+
+.rep-tabs__tab.activo {
+  color:        var(--color-texto-primario);
+  border-color: var(--color-acento);
+}
+
+/* ── Contenido de cada tab ── */
+.rep-tab-content {
+  padding: 0 var(--espacio-1);
+}
+
+.rep-tab-texto {
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-xs);
+  line-height:    1.9;
+  letter-spacing: 0.04em;
+  color:          var(--color-texto-secundario);
+  white-space:    pre-wrap;
+}
+
+.rep-tab-texto--creditos,
+.rep-tab-texto--letra {
+  white-space:  pre-wrap;
+  font-size:    var(--texto-xxs);
+  line-height:  1.8;
+  letter-spacing: 0.06em;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* LÍRICAS SINCRONIZADAS (KARAOKE)                                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.rep-lirica-wrap {
+  max-height:  260px;
+  overflow-y:  auto;
+  scroll-behavior: smooth;
+  padding-right: var(--espacio-2);
+}
+
+.rep-lirica-wrap::-webkit-scrollbar {
+  width: 3px;
+}
+.rep-lirica-wrap::-webkit-scrollbar-track {
+  background: var(--color-fondo-base);
+}
+.rep-lirica-wrap::-webkit-scrollbar-thumb {
+  background: var(--color-borde-primario);
+}
+
+.rep-lirica {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--espacio-2);
+  padding:        var(--espacio-2) 0;
+}
+
+.rep-lirica__linea {
+  font-family:    var(--fuente-mono);
+  font-size:      var(--texto-xs);
+  letter-spacing: 0.06em;
+  line-height:    1.7;
+  color:          var(--color-texto-apagado);
+  padding:        var(--espacio-1) var(--espacio-2);
+  transition:     color var(--transicion-rapida),
+                  background-color var(--transicion-rapida);
+  border-left:    2px solid transparent;
+}
+
+.rep-lirica__linea.activa {
+  color:            var(--color-texto-primario);
+  font-weight:      600;
+  border-left-color: var(--color-acento);
+  background-color: var(--color-fondo-hover);
+  letter-spacing:   0.08em;
+}

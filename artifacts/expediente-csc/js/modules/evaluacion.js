@@ -27,14 +27,6 @@ import {
 // ── Estado del módulo ────────────────────────────────────────────────────────
 
 /**
- * Calificación seleccionada actualmente por el evaluador.
- * 0 indica que no se ha seleccionado ninguna.
- * @type {number}
- */
-let calificacionSeleccionada = 0;
-
-
-/**
  * Indica si el formulario de evaluación ya fue enviado.
  * Evita envíos duplicados.
  * @type {boolean}
@@ -48,70 +40,10 @@ let evaluacionEnviada = false;
  * Se llama una sola vez desde app.js.
  */
 export function initEvaluacion() {
-  // Crear los botones numéricos del selector de calificación
-  crearSelectorCalificacion();
-
-  // Registrar listener del formulario de evaluación
   const form = document.getElementById('form-evaluacion');
   if (form) {
     form.addEventListener('submit', manejarEnvioEvaluacion);
   }
-}
-
-
-// ── Selector de calificación ─────────────────────────────────────────────────
-
-/**
- * Genera dinámicamente los 10 botones numerados del selector de calificación.
- * Al hacer clic en un número, se marca como seleccionado visualmente
- * y se actualiza calificacionSeleccionada.
- */
-function crearSelectorCalificacion() {
-  const contenedor = document.getElementById('eval-calificacion');
-  if (!contenedor) return;
-
-  // Crear botones del 1 al 10
-  for (let i = 1; i <= 10; i++) {
-    const btn = document.createElement('button');
-    btn.type         = 'button';
-    btn.className    = 'calificacion-num';
-    btn.textContent  = String(i);
-    btn.dataset.valor = String(i);
-    btn.setAttribute('aria-label', `Calificación ${i}`);
-
-    btn.addEventListener('click', () => seleccionarCalificacion(i));
-
-    contenedor.appendChild(btn);
-  }
-}
-
-
-/**
- * Marca una calificación como seleccionada.
- * Actualiza la variable de estado y el estilo visual de los botones.
- *
- * @param {number} valor - Número del 1 al 10 seleccionado
- */
-function seleccionarCalificacion(valor) {
-  if (evaluacionEnviada) return; // No permitir cambios tras envío
-
-  calificacionSeleccionada = valor;
-
-  // Actualizar estado visual de todos los botones
-  const botones = document.querySelectorAll('.calificacion-num');
-  botones.forEach(btn => {
-    const btnValor = parseInt(btn.dataset.valor, 10);
-    if (btnValor === valor) {
-      btn.classList.add('seleccionado');
-      btn.setAttribute('aria-pressed', 'true');
-    } else {
-      btn.classList.remove('seleccionado');
-      btn.setAttribute('aria-pressed', 'false');
-    }
-  });
-
-  // Limpiar posible error de calificación
-  limpiarMensaje('eval-error');
 }
 
 
@@ -143,8 +75,8 @@ async function manejarEnvioEvaluacion(e) {
   const pregunta4 = document.getElementById('eval-p4')?.value.trim() || '';
   const pregunta5 = document.getElementById('eval-p5')?.value.trim() || '';
 
-  // Validar campos requeridos (pregunta 1, pregunta 5 y calificación)
-  const esValido = validarFormularioEvaluacion(calificacionSeleccionada, pregunta1, pregunta5);
+  // Validar campos requeridos (pregunta 1 y pregunta 5)
+  const esValido = validarFormularioEvaluacion(pregunta1, pregunta5);
   if (!esValido) return;
 
   // Obtener usuario de la sesión actual
@@ -152,9 +84,8 @@ async function manejarEnvioEvaluacion(e) {
 
   // Construir objeto de evaluación
   const evaluacion = {
-    usuarioId:   usuario?.id || null,
-    expediente:  'CSC-2026-MB',
-    calificacion: calificacionSeleccionada,
+    usuarioId:  usuario?.id || null,
+    expediente: 'CSC-2026-MB',
     pregunta1,
     pregunta2,
     pregunta3,
@@ -216,12 +147,8 @@ async function manejarEnvioEvaluacion(e) {
  * @param {string} comentarioFinal - Texto del comentario final
  * @returns {boolean} — true si todos los campos requeridos son válidos
  */
-function validarFormularioEvaluacion(calificacion, pregunta1, pregunta5) {
+function validarFormularioEvaluacion(pregunta1, pregunta5) {
   const errores = [];
-
-  if (!calificacion || calificacion < 1 || calificacion > 10) {
-    errores.push('CALIFICACIÓN REQUERIDA: SELECCIONE UNA PUNTUACIÓN DEL 1 AL 10.');
-  }
 
   if (!pregunta1 || pregunta1.length < 5) {
     errores.push('PREGUNTA 01 REQUERIDA: INDIQUE CUÁL CANCIÓN CONSIDERA MÁS REPRESENTATIVA.');
@@ -267,7 +194,7 @@ function deshabilitarFormulario() {
   if (!form) return;
 
   // Deshabilitar todos los inputs y textareas
-  form.querySelectorAll('input, textarea, button, .calificacion-num').forEach(el => {
+  form.querySelectorAll('input, textarea, button').forEach(el => {
     el.disabled = true;
     el.style.opacity = '0.5';
     el.style.cursor  = 'not-allowed';
@@ -289,16 +216,7 @@ function deshabilitarFormulario() {
  * Se llama al cerrar sesión o iniciar una nueva sesión.
  */
 export function resetearEvaluacion() {
-  calificacionSeleccionada = 0;
-  evaluacionEnviada        = false;
-
-  // Limpiar selector de calificación
-  document.querySelectorAll('.calificacion-num').forEach(btn => {
-    btn.classList.remove('seleccionado');
-    btn.disabled       = false;
-    btn.style.opacity  = '';
-    btn.style.cursor   = '';
-  });
+  evaluacionEnviada = false;
 
   // Resetear formulario
   const form = document.getElementById('form-evaluacion');

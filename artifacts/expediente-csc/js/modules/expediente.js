@@ -153,19 +153,8 @@ function crearTarjetaEvidencia(cancion, numero) {
     contenido.appendChild(sub);
   }
 
-  // Reproductor de audio (siempre visible al abrir)
+  // Reproductor con líricas, notas, reacción, rating y tabs integrados
   contenido.appendChild(crearReproductor(cancion));
-
-  // Secciones de información (colapsables)
-  if (cancion.historia) {
-    contenido.appendChild(crearAcordeon('HISTORIA DE LA PIEZA', cancion.historia, 'texto'));
-  }
-  if (cancion.letra) {
-    contenido.appendChild(crearAcordeon('TRANSCRIPCIÓN DE LETRA', cancion.letra, 'letra'));
-  }
-  if (cancion.creditos) {
-    contenido.appendChild(crearAcordeon('FICHA TÉCNICA Y CRÉDITOS', cancion.creditos, 'creditos'));
-  }
 
   // ── Toggle abrir/cerrar ────────────────────────────────────────────────────
   const toggleBtn = header.querySelector('.evidencia__toggle');
@@ -220,54 +209,3 @@ function alternarEvidencia(tarjeta, header, toggleBtn) {
 }
 
 
-/**
- * Crea una sección colapsable (acordeón) dentro de la evidencia.
- *
- * @param {string} titulo    - Título de la sección (ej: "HISTORIA DE LA PIEZA")
- * @param {string} contenido - Texto del contenido
- * @param {'texto'|'letra'|'creditos'} tipo - Controla el estilo del texto
- * @returns {HTMLElement}
- */
-function crearAcordeon(titulo, contenido, tipo) {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'ev-acordeon';
-
-  // Cabecera del acordeón
-  const cabecera = document.createElement('button');
-  cabecera.type      = 'button';
-  cabecera.className = 'ev-acordeon__cabecera';
-  cabecera.setAttribute('aria-expanded', 'false');
-  cabecera.innerHTML = `
-    <span>${titulo}</span>
-    <span class="ev-acordeon__icono">▶</span>
-  `;
-
-  // Cuerpo del acordeón
-  const cuerpo = document.createElement('div');
-  cuerpo.className = 'ev-acordeon__cuerpo';
-
-  const textoEl = tipo === 'letra' || tipo === 'creditos'
-    ? document.createElement('pre')
-    : document.createElement('p');
-
-  textoEl.className   = `ev-acordeon__texto ev-acordeon__texto--${tipo}`;
-  textoEl.textContent = contenido;
-  cuerpo.appendChild(textoEl);
-
-  // Toggle
-  cabecera.addEventListener('click', () => {
-    const abierto = wrapper.classList.contains('abierto');
-    if (abierto) {
-      wrapper.classList.remove('abierto');
-      cabecera.setAttribute('aria-expanded', 'false');
-    } else {
-      wrapper.classList.add('abierto');
-      cabecera.setAttribute('aria-expanded', 'true');
-    }
-  });
-
-  wrapper.appendChild(cabecera);
-  wrapper.appendChild(cuerpo);
-
-  return wrapper;
-}

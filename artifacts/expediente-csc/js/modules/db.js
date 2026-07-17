@@ -165,6 +165,40 @@ export async function registrarEvaluacion(evaluacion) {
 
 
 /**
+ * Registra una reacción (♡) del usuario en un momento específico de la canción.
+ *
+ * @param {number|string} cancionId - ID de la canción
+ * @param {number}        timestamp - Segundo exacto en que se hizo clic
+ * @returns {Promise<{exito: boolean}>}
+ */
+export async function registrarReaccion(cancionId, timestamp) {
+  const reacciones = JSON.parse(safeStorage.getItem('reacciones') || '[]');
+  reacciones.push({
+    cancionId,
+    timestamp,
+    fecha: new Date().toISOString()
+  });
+  safeStorage.setItem('reacciones', JSON.stringify(reacciones));
+  return { exito: true };
+}
+
+
+/**
+ * Registra la calificación (1–10) individual de una canción.
+ *
+ * @param {number|string} cancionId   - ID de la canción
+ * @param {number}        calificacion - Valor del 1 al 10
+ * @returns {Promise<{exito: boolean}>}
+ */
+export async function registrarCalificacionCancion(cancionId, calificacion) {
+  const califs = JSON.parse(safeStorage.getItem('calificaciones_canciones') || '{}');
+  califs[cancionId] = { calificacion, fecha: new Date().toISOString() };
+  safeStorage.setItem('calificaciones_canciones', JSON.stringify(califs));
+  return { exito: true };
+}
+
+
+/**
  * Registra el último acceso del usuario.
  *
  * @param {number} usuarioId

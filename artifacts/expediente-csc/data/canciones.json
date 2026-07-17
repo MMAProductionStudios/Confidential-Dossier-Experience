@@ -6,6 +6,29 @@
     "audio": "",
     "historia": "Esta pieza nació de la observación de cómo las masas adoptan comportamientos que ningún individuo asumiría por sí solo. El compositor documentó durante meses conversaciones en plazas públicas, mercados y redes sociales, registrando patrones de repetición y validación colectiva que moldean la realidad percibida.\n\nLa letra construye un retrato de la complicidad silenciosa: el momento en que una mentira repetida suficientes veces adquiere el peso de la verdad y la multitud se convierte en cámara de eco.",
     "letra": "Nadie lo dijo primero\ntodos lo saben igual\nel rumor tiene su templo\nla mentira, catedral.\n\nSi lo repites tres veces\nse vuelve evangelio y ley,\ncada boca que lo cuenta\nle da corona de rey.\n\nCoro:\nLa multitud no pregunta\nla multitud sólo da,\nverdades que no son suyas\npero sabe repetir.\n\nY el que duda se queda solo\ny el que calla tiene razón,\ny la mentira más grande\nes la que suena a canción.\n\nLa plaza está llena\nde bocas sin dueño,\nde frases prestadas\ny sueños ajenos.\n\nY nadie recuerda\nde dónde vino el cuento,\npero todos lo cuentan\ncon fuerza y convento.",
+    "lirica": [
+      { "t": 0,    "texto": "Nadie lo dijo primero" },
+      { "t": 4,    "texto": "todos lo saben igual" },
+      { "t": 8,    "texto": "el rumor tiene su templo" },
+      { "t": 12,   "texto": "la mentira, catedral." },
+      { "t": 18,   "texto": "Si lo repites tres veces" },
+      { "t": 22,   "texto": "se vuelve evangelio y ley," },
+      { "t": 26,   "texto": "cada boca que lo cuenta" },
+      { "t": 30,   "texto": "le da corona de rey." },
+      { "t": 36,   "texto": "La multitud no pregunta" },
+      { "t": 40,   "texto": "la multitud sólo da," },
+      { "t": 44,   "texto": "verdades que no son suyas" },
+      { "t": 48,   "texto": "pero sabe repetir." },
+      { "t": 54,   "texto": "Y el que duda se queda solo" },
+      { "t": 58,   "texto": "y el que calla tiene razón," },
+      { "t": 62,   "texto": "y la mentira más grande" },
+      { "t": 66,   "texto": "es la que suena a canción." }
+    ],
+    "notas_produccion": [
+      { "t": 0,   "nota": "Intro producida con samples de voces de mercado grabadas en Zacatecas, 2024.", "duracion": 6 },
+      { "t": 36,  "nota": "El coro utiliza arreglo de voces a 4 partes con síncopa característica del tamborazo.", "duracion": 8 },
+      { "t": 62,  "nota": "El efecto de eco en las últimas líneas es intencional — metáfora sonora de la cámara de eco.", "duracion": 7 }
+    ],
     "creditos": "Composición: MM&A Production Studios\nArreglos: Producción MM&A\nMezcla y masterización: Estudio Central\nAño de registro: 2026\nExpediente: CSC-2026-MB-EV01"
   },
   {
