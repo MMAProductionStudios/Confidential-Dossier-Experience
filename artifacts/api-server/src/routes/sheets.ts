@@ -1,19 +1,14 @@
 /**
  * sheets.ts — Proxy privado para Google Sheets
  * ─────────────────────────────────────────────────────────────────────────────
- * Este módulo expone dos rutas que el frontend llama para obtener datos:
+ * Este módulo expone las rutas que el frontend llama para obtener y actualizar datos:
  *
- *   GET /api/sheets/usuarios  — lista de usuarios del comité
- *   GET /api/sheets/canciones — lista de canciones con letras y créditos
+ *   GET  /api/sheets/usuarios   — lista de usuarios del comité
+ *   GET  /api/sheets/canciones  — lista de canciones con letras y créditos
+ *   POST /api/sheets/geolock    — registra el país/IP en la columna GEOLOCK (BG)
+ *   POST /api/sheets/track-play — registra eventos de reproducción de canciones
  *
  * Las credenciales de la cuenta de servicio NUNCA salen al navegador.
- * Se leen desde variables de entorno:
- *   GOOGLE_SHEETS_ID          — ID del spreadsheet
- *   GOOGLE_SERVICE_ACCOUNT    — JSON completo de la cuenta de servicio (string)
- *
- * Nombres de pestañas esperados en el spreadsheet:
- *   "usuarios"  — hoja de miembros del comité
- *   "canciones" — hoja de canciones / letras
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -47,7 +42,7 @@ function setCache(key: string, data: unknown): void {
 }
 
 
-// ── Helper: obtener cliente autenticado de Google Sheets ─────────────────────
+// ── Helper: obtener cliente autenticado de Google Sheets con lectura/escritura ─
 
 function getSheetsClient() {
   const serviceAccountRaw = process.env["GOOGLE_SERVICE_ACCOUNT"];
@@ -59,10 +54,25 @@ function getSheetsClient() {
 
   const auth = new google.auth.GoogleAuth({
     credentials,
-    scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
+    // Permisos completos de lectura y escritura para guardar GEOLOCK
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });
 
   return google.sheets({ version: "v4", auth });
+}
+
+
+// ── Helper: convertir índice numérico de columna a letra A1 (ej. 58 -> BG) ────
+
+function indexToColLetter(index: number): string {
+  let temp = index + 1;
+  let letter = "";
+  while (temp > 0) {
+    const mod = (temp - 1) % 26;
+    letter = String.fromCharCode(65 + mod) + letter;
+    temp = Math.floor((temp - mod) / 26);
+  }
+  return letter;
 }
 
 
@@ -100,49 +110,94 @@ async function leerHoja(nombreHoja: string): Promise<Record<string, string>[]> {
 }
 
 
+// ── Helper: actualizar celda específica de GEOLOCK por correo ────────────────
+
+async function actualizarGEOLOCK(email: string, pais: string): Promise<boolean> {
+  const spreadsheetId = process.env["GOOGLE_SHEETS_ID"];
+  if (!spreadsheetId) return false;
+
+  const sheets = getSheetsClient();
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: "usuarios",
+  });
+
+  const rows = response.data.values;
+  if (!rows || rows.length < 2) return false;
+
+  const headers = (rows[0] as string[]).map(h => (h || "").trim());
+
+  // Buscar columna GEOLOCK (si no existe por nombre, se usa BG que es el índice 58)
+  let colIndex = headers.findIndex(h => h.toUpperCase() === "GEOLOCK");
+  let colLetter = "BG";
+
+  if (colIndex !== -1) {
+    colLetter = indexToColLetter(colIndex);
+  }
+
+  // Buscar columna de Email para emparejar al usuario
+  let emailColIdx = headers.findIndex(h => h.toLowerCase() === "email");
+  if (emailColIdx === -1) {
+    emailColIdx = headers.findIndex(h => h.toLowerCase().includes("nombre"));
+  }
+
+  // Buscar la fila correspondiente al usuario
+  let targetRowIndex = -1;
+  for (let i = 1; i < rows.length; i++) {
+    const cellVal = (rows[i][emailColIdx] || "").trim().toLowerCase();
+    if (cellVal && cellVal === email.trim().toLowerCase()) {
+      targetRowIndex = i + 1; // Fila real en Google Sheets (base 1)
+      break;
+    }
+  }
+
+  if (targetRowIndex === -1) return false;
+
+  // Actualizar la celda exacta en Google Sheets
+  const rangeToUpdate = `usuarios!${colLetter}${targetRowIndex}`;
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: rangeToUpdate,
+    valueInputOption: "USER_ENTERED",
+    requestBody: {
+      values: [[pais]]
+    }
+  });
+
+  return true;
+}
+
+
 // ── Mapeo de filas a objetos de usuario ─────────────────────────────────────
 
-/**
- * Convierte una fila de la hoja "usuarios" al formato que espera el frontend.
- *
- * Columnas esperadas (basadas en el diseño del usuario):
- *   ID, Expediente, Código, Nombre Completo, Título, Especialidad,
- *   Consejo, Nivel, País, Estado/Provincia, Ciudad, Email, Teléfono,
- *   Foto, Estado, Último acceso, Evaluación, Entrega expediente, Notas
- */
 function mapearUsuario(row: Record<string, string>) {
   return {
-    id:                  row["ID"]                || "",
-    numeroExpediente:    row["Nombre Completo"]   || "",   // login por nombre
-    codigo:              row["Código"]            || "",
-    nombre:              row["Nombre Completo"]   || "",
-    tituloProfesional:   row["Título"]            || "",
-    especialidad:        row["Especialidad"]      || "",
-    categoria:           row["Consejo"]           || "",
-    nivelAutorizacion:   row["Nivel"]             || "",
-    pais:                row["País"]              || "",
-    estado:              row["Estado/Provincia"]  || "",
-    ciudad:              row["Ciudad"]            || "",
-    email:               row["Email"]             || "",
-    telefono:            row["Teléfono"]          || "",
-    fotografia:          row["Foto"]              || "",
-    activo:              (row["Estado"] || "").toLowerCase() !== "inactivo",
-    bio:                 row["Notas"]             || "",
+    id:                   row["ID"]                 || "",
+    numeroExpediente:     row["Nombre Completo"]    || "",   // login por nombre
+    codigo:               row["Código"]             || "",
+    nombre:               row["Nombre Completo"]    || "",
+    tituloProfesional:    row["Título"]             || "",
+    especialidad:         row["Especialidad"]       || "",
+    categoria:            row["Consejo"]            || "",
+    nivelAutorizacion:    row["Nivel"]              || "",
+    pais:                 row["País"]               || "",
+    estado:               row["Estado/Provincia"]   || "",
+    ciudad:               row["Ciudad"]             || "",
+    email:                row["Email"]              || "",
+    telefono:             row["Teléfono"]           || "",
+    fotografia:           row["Foto"]               || "",
+    activo:               (row["Estado"] || "").toLowerCase() !== "inactivo",
+    bio:                  row["Bio web"] || row["Notas"] || "",
     mensajePersonalizado: row["Mensaje personalizado"] || row["Notas"] || "",
     evaluacionRealizada: (row["Evaluación"] || "").toLowerCase() === "sí",
-    ultimoAcceso:        row["Último acceso"]     || null,
+    ultimoAcceso:         row["Último acceso"]      || null,
+    geolock:              row["GEOLOCK"]            || "",
   };
 }
 
 
 // ── Mapeo de filas a objetos de canción ──────────────────────────────────────
 
-/**
- * Convierte una fila de la hoja "canciones" al formato que espera el frontend.
- *
- * Columnas esperadas en la hoja "canciones":
- *   ID, Titulo, Subtitulo, Audio, Historia, Letra, Creditos
- */
 function mapearCancion(row: Record<string, string>) {
   return {
     id:        Number(row["ID"])    || 0,
@@ -186,7 +241,7 @@ router.get("/canciones", async (_req: Request, res: Response) => {
       return;
     }
 
-    const filas    = await leerHoja("canciones");
+    const filas     = await leerHoja("canciones");
     const canciones = filas.map(mapearCancion);
 
     setCache("canciones", canciones);
@@ -198,10 +253,50 @@ router.get("/canciones", async (_req: Request, res: Response) => {
 });
 
 
-// ── Ruta de diagnóstico (verifica configuración sin exponer credenciales) ────
+// ── Nueva Ruta: Guardar GEOLOCK en la Columna BG ─────────────────────────────
+
+router.post("/geolock", async (req: Request, res: Response) => {
+  try {
+    const { email, country, ip } = req.body || {};
+    if (!email) {
+      res.status(400).json({ ok: false, error: "Falta el email del usuario." });
+      return;
+    }
+
+    const textoUbicacion = country ? `${country}${ip ? ` [IP: ${ip}]` : ""}` : "Desconocido";
+    const guardado = await actualizarGEOLOCK(email, textoUbicacion);
+
+    if (guardado) {
+      cache.delete("usuarios"); // Limpia cache para refrescar datos
+    }
+
+    res.json({ ok: true, registrado: guardado, ubicacion: textoUbicacion });
+  } catch (err: unknown) {
+    const mensaje = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ ok: false, error: mensaje });
+  }
+});
+
+
+// ── Nueva Ruta: Registrar Reproducción de Canciones ─────────────────────────
+
+router.post("/track-play", async (req: Request, res: Response) => {
+  try {
+    const { email, trackTitle, action } = req.body || {};
+    console.log(`[REPRODUCCIÓN] Usuario: ${email || "Anónimo"} | Acción: ${action || "play"} | Canción: ${trackTitle}`);
+    
+    res.json({ ok: true, registrado: true });
+  } catch (err: unknown) {
+    const mensaje = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ ok: false, error: mensaje });
+  }
+});
+
+
+// ── Ruta de diagnóstico ──────────────────────────────────────────────────────
 
 router.get("/status", (_req: Request, res: Response) => {
-  const tieneSheetId     = !!process.env["GOOGLE_SHEETS_ID"];
+  const tieneSheetId      = !!process.env["GOOGLE_SHEETS_ID"];
   const tieneCuentaServ  = !!process.env["GOOGLE_SERVICE_ACCOUNT"];
 
   res.json({
@@ -212,6 +307,5 @@ router.get("/status", (_req: Request, res: Response) => {
     },
   });
 });
-
 
 export default router;
